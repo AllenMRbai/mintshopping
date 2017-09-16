@@ -82,4 +82,7 @@ img{width: 100%;border:0;display: block;height: auto}
 @media only screen and (-webkit-min-device-pixel-ratio: 2){
 	.line_bottom:after,.line_top:before{-webkit-transform: scaleY(0.5);transform: scaleY(0.5);}
 }
+body{
+	background-color: #f0f0f0;
+}
 </style>

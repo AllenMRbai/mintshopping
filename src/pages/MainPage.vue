@@ -44,7 +44,8 @@ export default {
   },
   beforeUpdate(){
       //获得当前路由的name
-      this.pageNow=this.$route.name.toLocaleLowerCase();  
+	  this.pageNow=this.$route.name.toLocaleLowerCase();
+	  //console.log(this.$route.name.toLocaleLowerCase())
   },
   created(){
       //获得当前路由的name
