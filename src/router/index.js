@@ -33,7 +33,7 @@ export default new Router({
     //主页面 三大页面
     {
       path:'/',
-      name:'MainPage',
+      // name:'MainPage',
       component:MainPage,
       children:[
         {
@@ -56,7 +56,7 @@ export default new Router({
     //订单 4页面
     {
       path:'/orders',
-      name:'OrderPage',
+      // name:'OrderPage',
       component:OrderPage,
       children:[
         {
@@ -84,7 +84,7 @@ export default new Router({
     //注册 登录 修改
     {
       path:'/sign',
-      name:'SignPage',
+      // name:'SignPage',
       component:SignPage,
       children:[
         {

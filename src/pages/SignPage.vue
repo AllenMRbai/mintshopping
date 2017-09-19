@@ -1,9 +1,7 @@
 <template>
 <div class="white_bg">
     <transition name="go" mode="out-in" appear>
-        <keep-alive> 
             <router-view></router-view>
-        </keep-alive>
     </transition>  
 </div>
     
@@ -32,7 +30,7 @@ export default {
 .go-enter-active, .go-leave-active {
   transition: all .3s
 }
-.go-enter, .go-leave-to{
+.go-enter{
   transform: translateX(100vw);
 }
 

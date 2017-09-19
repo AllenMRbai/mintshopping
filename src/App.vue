@@ -19,7 +19,7 @@ html{font-size: 20px;}
 h1,h2,h3,h4,h5,h6,div,li,a,div{font-size:.75rem}
 div,li,header,main,footer,ul,ol{box-sizing: border-box;}
 ul,ol{list-style:none}
-input{box-sizing: border-box;border:none;}
+input{box-sizing: border-box;border:none;outline: none;}
 a{text-decoration:none}
 a:hover{text-decoration:underline}
 img{width: 100%;border:0;display: block;height: auto}
@@ -27,10 +27,30 @@ img{width: 100%;border:0;display: block;height: auto}
 .clearfix:after{content:'\20';display:block;height:0;clear:both}
 .clearfix{zoom:1}.clear{clear:both;height:0;line-height:0;font-size:0;visibility:hidden;overflow:hidden}
 
+::-webkit-input-placeholder {
+		color: #b2b2b2;
+}
+:-moz-placeholder {
+		color: #b2b2b2;
+}
+
+::-moz-placeholder{
+		color: #b2b2b2;
+}
+
+:-ms-input-placeholder {
+		color: #b2b2b2;
+}
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale
+}
+
+/* 重写mint-ui的样式 */
+.mint-msgbox-confirm{
+	color:#ff0036;
 }
 
 /* 公共样式 */

@@ -3,7 +3,7 @@
     <!--头部导航 -->
     <div class="top_bar">
 		<ul class="flex_box flex_around line_bottom">
-			<router-link tag="li" :to="nav.link" :class="{active:pageNow===nav.EnglishName}" v-for="(nav,index) in navLists" :key="index">{{ nav.ChineseName }}</router-link>
+			<router-link tag="li" :to="nav.link" :class="{active:pageNow===nav.EnglishName}" v-for="(nav,index) in navLists" :key="index" replace>{{ nav.ChineseName }}</router-link>
 		</ul>
 		<div class="red_segment" :class="pageNow"></div>
 	</div>
