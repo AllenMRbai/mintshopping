@@ -6,8 +6,8 @@
 	<header>
 		<div class="search_bar_box red_bar_box flex_center">
 			<div class="follow_btn">关注</div>
-			<div class="search_bar">输入你想要搜索的东西</div>
-			<div class="search_btn"><img src="../assets/common_search_white.png"></div>
+			<router-link class="search_bar" tag="div" to="/search/guide">输入你想要搜索的东西</router-link>
+			<router-link class="search_btn" tag="div" to="/search/guide"><img src="../assets/common_search_white.png"></router-link>
 		</div>
 	</header>
 

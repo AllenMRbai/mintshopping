@@ -8,7 +8,7 @@
   <div class="sign_in" @click="login">登录</div>
   <ul class="bottom_box flex_betwen">
     <router-link tag="li" to="/sign/signUp1">新用户注册</router-link>
-    <router-link tag="li" to="/sign/alter">忘记密码</router-link>
+    <router-link tag="li" to="/sign/alter1">忘记密码</router-link>
   </ul>
 </div>
 </template>

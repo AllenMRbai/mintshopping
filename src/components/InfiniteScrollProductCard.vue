@@ -8,15 +8,15 @@
             :infinite-scroll-disabled="loading" 
             infinite-scroll-distance="40">
 
-            <div class="product_card" v-for="card in cards" :key="card.id">
+            <router-link tag="div" :to="`/productDetail/${card.id}`" class="product_card" v-for="card in cards" :key="card.id">
                 <div class="pro_pic"><img v-lazy.product-card="card.pic"></div>
                 <div class="pro_name">{{ card.proName }}</div>
                 <h3>￥<span>{{ card.price }}</span></h3>
-            </div> 
+            </router-link> 
             
         </div>
         <!-- 缺省页面 -->
-        <div class="default_page hidden" v-else>
+        <div class="default_page" v-else>
             <h2>没找到任何商品！</h2>
         </div>
     </div>
