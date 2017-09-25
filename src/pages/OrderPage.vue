@@ -8,7 +8,7 @@
 		<div class="red_segment" :class="pageNow"></div>
 	</div>
 
-    <transition name="fade" mode="out-in" appear>
+    <transition name="fade" mode="out-in">
         <keep-alive> 
             <router-view></router-view>
         </keep-alive>

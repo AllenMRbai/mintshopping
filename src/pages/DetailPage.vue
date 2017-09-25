@@ -3,14 +3,14 @@
 	<!-- 产品图片和简介 -->
     <div class="pro_pic_box">
         <router-link tag="div" to="/search/guide" class="search_btn"><img src="../assets/common_search_white.png"></router-link>
-        <img src="../assets/product.jpeg">
+        <img :src="productDetail.Pic">
     </div>
     <div class="pro_detail_box">
-        <div class="pro_name">爱空间的恢复健康爱的经费和爱空间的划分按揭客户爱神的箭好发见大家肯定</div>
-        <div class="zhu_currency">可获得<span>126</span>猪币</div>
+        <div class="pro_name">{{ productDetail.Title }}</div>
+        <div class="zhu_currency">可获得<span>{{ productDetail.Price }}</span>猪币</div>
         <div class="sale_box flex_betwen">
-            <h3>￥<span>126</span></h3>
-            <h4>销量&nbsp;<span>2564</span></h4>
+            <h3>￥<span>{{ productDetail.Price }}</span></h3>
+            <h4>销量&nbsp;<span>{{ productDetail.Sales_num }}</span></h4>
         </div>
     </div>
 
@@ -25,17 +25,11 @@
 
 	<div class="sub_page" v-if="nowPage==0"><!-- 商品详情page -->
 		<div class="detail_pic_box">
-			<img src="../assets/fake_detail_pic.jpg">
-			<img src="../assets/fake_detail_pic.jpg">
-			<img src="../assets/fake_detail_pic.jpg">
-			<img src="../assets/fake_detail_pic.jpg">
-			<img src="../assets/fake_detail_pic.jpg">
+			<img v-for="(pic,index) in proDetPics" :key="index" v-lazy="pic">
 		</div>
 	</div>
 	<div class="sub_page" v-else-if="nowPage==1"><!-- 购物须知page -->
-		<div class="detail_pic_box">
-
-		</div>
+		
 	</div>
 	<div class="sub_page" v-else><!-- 相似商品卡片 -->
     	<product-card></product-card>
@@ -64,7 +58,7 @@
     </div>
 
     <!-- 回到顶部按钮 -->
-    <div class="gotop_btn"><img src="../assets/common_totop_black.png"></div>
+    <div class="gotop_btn" @click="goToTop" v-show="showToToP"><img src="../assets/common_totop_black.png"></div>
 
     <!-- 交易面板 -->
     <div class="black_mask_200" v-show="showPurchasePanel" @click="closePurchasePanel"></div>
@@ -121,8 +115,12 @@ export default {
 			{EnglishName:'ShoppingGuid',ChineseName:'购物须知'},
 			{EnglishName:'SimilarGoods',ChineseName:'相似商品'}
 		],
-		nowPage:0,
-		showPurchasePanel:false
+		nowPage:0,//子页面的当前页面索引 0表示商品详情 1表示购物须知 2表示相似商品
+		showPurchasePanel:false,//是否打开购买面板
+		productId:'',
+		productDetail:{},
+		showToToP:false,
+		proDetPics:[]
     }
       
   },
@@ -140,18 +138,56 @@ export default {
 	  },
 	  closePurchasePanel(){
 		  this.showPurchasePanel=false;
+	  },
+	  getGoodsInfo(){
+		  this.$http.get(`http://api.lingkuaiyou.com/Goods/GetGoodsInfo?id=${this.productId}`)
+		  .then((data)=>{
+			  let body=JSON.parse(data.bodyText);
+			  this.productDetail=body.data;
+			  let detPicBox=document.getElementsByClassName('detail_pic_box')[0];
+			  //detPicBox.innerHTML=body.data.TaoBao_details
+			  let str=body.data.TaoBao_details;
+			  let reg=/src="([^"\r\n]*)"/g;
+			  let result;
+			  while((result=reg.exec(str))!=null){
+				RegExp.lastIndex=result.index
+				this.proDetPics.push(result[1]);
+			  }
+			  //console.log(body.data.TaoBao_details)
+		  })
+		  .catch((err)=>{
+			  console.log(err);
+		  })
+	  },
+	  goToTop(){
+		  document.body.scrollTop=0;
 	  }
   },
   created(){
      //获得当前路由的name
-     var asd=this.$route;
-     console.log(asd)
+	 this.productId=this.$route.params.productId;
+	 this.getGoodsInfo();
+	 document.body.onscroll=()=>{
+		 if(document.body.scrollTop>300){
+			 this.showToToP=true;
+		 }else{
+			 this.showToToP=false;
+		 }
+	 }
   }
+     
+
+
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+image[lazy=loading] {
+  width: 40px;
+  height: 300px;
+  margin: auto;
+}
 /*商品简介*/
 .pro_pic_box{
 	width: 100%;

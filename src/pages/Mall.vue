@@ -58,11 +58,10 @@
 		<div class="special_subject"><img src="../assets/special_subjuct.jpg"></div><!-- banner2 -->
 		
 		<!-- 可加载的卡片式产品列表 -->
-		<infinite-scroll-product-card :cards='productCards'></infinite-scroll-product-card>
+		<infinite-scroll-product-card :cards='productCards' :loading='stopLoad' :no-more='noMore' @load-more='loadMore'></infinite-scroll-product-card>
 
 		<div class="bottom_blank_space" style="height: 50px;"></div><!-- 底部空白 -->
 	</main>
-
 
 </div>
     
@@ -91,29 +90,83 @@ export default {
           {title:'电竞标配',title2:'有了它，轻松上王者',lineRight:false,lineBottom:true},
           {title:'9.9元专区',title2:'最爱逛的小商品商城',lineRight:true,lineBottom:false},
           {title:'人气推荐',title2:'这里有最火爆的商品',lineRight:false,lineBottom:false},
-      ],
-	  productCards:[
-		{proName:"江南古韵床上纯棉十件套被套整套床单枕头凉席卡了按时缴费啊是就",price:124,pic:'../../static/img/product.jpeg',id:'asdf456546467'},
-		{proName:"江南古韵床上纯棉十件套被套整套床单枕头凉席卡了按时缴费啊是就",price:200,pic:'../../static/img/product.jpeg',id:'asdf456546468'},
-		{proName:"江南古韵床上纯棉十件套被套整套床单枕头凉席卡了按时缴费啊是就",price:124,pic:'../../static/img/product.jpeg',id:'asdf456546467'},
-		{proName:"江南古韵床上纯棉十件套被套整套床单枕头凉席卡了按时缴费啊是就",price:200,pic:'../../static/img/product.jpeg',id:'asdf456546468'}
-	  ], 
+	  ],
+	  pageIndex:1,
+	  stopLoad:false,//用来判断现在是否可以加载,true表示停止加载
+	  noMore:false,//true表示没有更多商品了
+	  productCards:[]
     }
   },
+  methods:{
+	loadMore(){
+		if(this.noMore){
+			return;
+		}
+		if(this.stopLoad){
+			return;
+		}
+		this.stopLoad=true;
+		this.$http.get(`http://api.lingkuaiyou.com/Goods/GetGoodsList?pageIndex=${this.pageIndex}&pageSize=12`)
+		.then((data)=>{
+			let body=JSON.parse(data.bodyText)
+			console.log('发送ajax')
+			//console.log(body.result);
+			//console.log('这是本次传过来的商品个数'+body.data.DataList.length)
+			if( body.result ){
+				let productLists=body.data.DataList;
+				let len=productLists.length;
+				if(len>0){
+					for(let i=0;i<len;i++){
+						this.productCards.push(productLists[i]);
+					}
+					this.pageIndex++;
+					this.stopLoad=false;
+					console.log(this.pageIndex);
+				}else{
+					this.noMore=true;//表示没有更多商品了
+				}
+			}else{//没有更多商品了
+				this.stopLoad=true;//阻止继续加载
+				this.noMore=true;//表示没有更多商品了
+			}
+		},(err)=>{
+			console.log(err);
+		})
+	}
+  },
   created:function(){
-	  this.$http.get('getProducts')
-	  .then((data)=>{
-		//this.productCards=data;
-	  },(err)=>{
-		  console.log(err);
-	  })
+	  this.loadMore();
+	  	 
+  },
+  mounted(){
+	  this.$nextTick(function () {
+			console.log('<-- 页面打开')
+	  console.log('pageIndex='+this.pageIndex)
+	  console.log('body的高度高度'+document.body.scrollTop)
+	  console.log('页面打开-->')
+		})
+	  
+	  
   }
+//   deactivated(){
+// 	  console.log('没有被缓存')
+//   },
+//   activated(){
+// 	   console.log('已经缓存')
+//   }
 
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.allen{
+	background-color: red;
+	color: #fff;
+	width: 50vw;
+	height: 50px;
+	text-align: center
+}
 header{
 	width: 100%;
 	width: 100vw;

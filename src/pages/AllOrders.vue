@@ -3,7 +3,7 @@
 <div class="cards_pannel">
     <div class="blacnk_space" style="height: 46px;"></div>
     <div class="card">
-        <div class="pro_detail_pannel">
+        <router-link tag='div' to="/orderDetail/waitingForShipment" class="pro_detail_pannel">
             <div class="flex_box flex_betwen">
                 <div class="pic"><img src="../../static/img/product.jpeg"></div>
                 <div class="right_box">
@@ -12,7 +12,7 @@
                     <div class="choice">颜色：绿色，尺寸：L</div>
                 </div>
             </div>
-        </div>
+        </router-link>
         <div class="line_top flex_end bottom">
             <div class="tips">等待发货中</div>
         </div>
@@ -20,7 +20,7 @@
     </div>
     
     <div class="card">
-        <div class="pro_detail_pannel">
+        <router-link tag='div' to="/orderDetail/hasShipped" class="pro_detail_pannel">
             <div class="flex_box flex_betwen">
                 <div class="pic"><img src="../../static/img/product.jpeg"></div>
                 <div class="right_box">
@@ -29,7 +29,7 @@
                     <div class="choice">颜色：绿色，尺寸：L</div>
                 </div>
             </div>
-        </div>
+        </router-link>
         <div class="line_top flex_end bottom">
             <div class="btn">查看物流</div>
             <div class="btn stroke_red">确认收货</div>
@@ -38,7 +38,7 @@
     </div>
 
     <div class="card">
-        <div class="pro_detail_pannel">
+        <router-link tag='div' to="/orderDetail/SuccessTrade" class="pro_detail_pannel">
             <div class="flex_box flex_betwen">
                 <div class="pic"><img src="../../static/img/product.jpeg"></div>
                 <div class="right_box">
@@ -47,7 +47,7 @@
                     <div class="choice">颜色：绿色，尺寸：L</div>
                 </div>
             </div>
-        </div>
+        </router-link>
         <div class="line_top flex_end bottom">
             <div class="btn">申请售后</div>
         </div>
@@ -55,7 +55,7 @@
     </div>
 
     <div class="card">
-        <div class="pro_detail_pannel">
+        <router-link tag='div' to="/orderDetail/waitingForPayment" class="pro_detail_pannel">
             <div class="flex_box flex_betwen">
                 <div class="pic"><img src="../../static/img/product.jpeg"></div>
                 <div class="right_box">
@@ -64,7 +64,7 @@
                     <div class="choice">颜色：绿色，尺寸：L</div>
                 </div>
             </div>
-        </div>
+        </router-link>
         <div class="line_top flex_end bottom">
             <div class="tips">剩余 <span>20</span>分 <span>50</span>秒</div>
             <div class="btn fill_red">去付款</div>
@@ -82,7 +82,12 @@ export default {
   name: 'AllOrders',
   data () {
     return {
-     
+        orders:[
+            {pic:'../../static/product.jpeg',type:'待发货',name:'爱空间的恢复健康爱的经费和爱空间的划分按揭客户爱神的箭好发见大家肯定',price:'126',options:[{key:'颜色',value:'绿色'},{key:'尺寸',value:'L'}]},
+            {pic:'../../static/product.jpeg',type:'已发货',name:'爱空间的恢复健康爱的经费和爱空间的划分按揭客户爱神的箭好发见大家肯定',price:'126',options:[{key:'颜色',value:'绿色'},{key:'尺寸',value:'L'}]},
+            {pic:'../../static/product.jpeg',type:'交易成功',name:'爱空间的恢复健康爱的经费和爱空间的划分按揭客户爱神的箭好发见大家肯定',price:'126',options:[{key:'颜色',value:'绿色'},{key:'尺寸',value:'L'}]},
+            {pic:'../../static/product.jpeg',type:'待付款',name:'爱空间的恢复健康爱的经费和爱空间的划分按揭客户爱神的箭好发见大家肯定',price:'126',options:[{key:'颜色',value:'绿色'},{key:'尺寸',value:'L'}]}
+        ]
     }
   },
   methods:{

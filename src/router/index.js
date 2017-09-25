@@ -12,6 +12,14 @@ import AllOrders from '@/pages/AllOrders'
 import PendingPayment from '@/pages/PendingPayment'
 import PendingShipment from '@/pages/PendingShipment'
 import Shipped from '@/pages/Shipped'
+//订单详情
+import OrderDetail from '@/pages/OrderDetail'
+import SuccessTrade from '@/pages/SuccessTrade'
+import WaitingForPayment from '@/pages/WaitingForPayment'
+import WaitingForShipment from '@/pages/WaitingForShipment'
+import HasShipped from '@/pages/HasShipped'
+import SuccessPurchase from '@/pages/SuccessPurchase'
+import SuccessPayment from '@/pages/SuccessPayment'
 //注册 登录 修改
 import SignPage from '@/pages/SignPage'
 import SignIn from '@/pages/SignIn'
@@ -33,11 +41,23 @@ import Payment from '@/pages/Payment'
 import AddAddress from '@/pages/AddAddress'
 import ManageAddress from '@/pages/ManageAddress'
 import AddressPage from '@/pages/AddressPage'
-
+//物流详情
+import Logistics from '@/pages/Logistics'
 Vue.use(Router)
 
 export default new Router({
   mode:'history',
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      console.log()
+      return savedPosition;
+    } else {
+      return {
+        x: 0,
+        y: 0
+      }
+    }
+  },
   routes: [
     {
       path: '/hello',
@@ -70,7 +90,6 @@ export default new Router({
     //订单 4页面
     {
       path:'/orders',
-      // name:'OrderPage',
       component:OrderPage,
       children:[
         {
@@ -94,6 +113,44 @@ export default new Router({
           component:Shipped
         },
       ]
+    },
+    //订单详情
+    {
+      path:'/orderDetail',
+      component:OrderDetail,
+      children:[
+        {
+          path:'successTrade',
+          name:'SuccessTrade',//交易成功
+          component:SuccessTrade
+        },
+        {
+          path:'waitingForPayment',
+          name:'WaitingForPayment',//待支付
+          component:WaitingForPayment
+        },
+        {
+          path:'waitingForShipment',
+          name:'WaitingForShipment',//待发货
+          component:WaitingForShipment
+        },
+        {
+          path:'hasShipped',
+          name:'HasShipped',//已发货
+          component:HasShipped
+        },
+        {
+          path:'successPurchase',
+          name:'SuccessPurchase',//确认收货时的详情页
+          component:SuccessPurchase
+        },
+        {
+          path:'successPayment',
+          name:'SuccessPayment',//购买商品支付成功时的详情页
+          component:SuccessPayment
+        }
+      ]
+
     },
     //注册 登录 修改
     {
@@ -179,6 +236,12 @@ export default new Router({
           component:AddAddress
         }
       ]
+    },
+    //物流管理
+    {
+      path:'/logistics',
+      name:'Logistics',
+      component:Logistics
     }
   ]
 })
