@@ -1,12 +1,12 @@
 <template>
 <div>
     <div class="address_pannel">
-		<div class="address_card">
+		<div class="address_card" v-for="(card,index) in addressCards" :key="card.ID">
 			<div class="top flex_betwen">
-				<div class="name">夜猫子</div>
-				<div class="phone">15454245654</div>
+				<div class="name">{{ card.Name }}</div>
+				<div class="phone">{{ card.Mobile }}</div>
 			</div>
-			<div class="address">浙江省宁波市慈溪市古塘街道北三环东路888号联盛大厦1号门 10楼1018</div>
+			<div class="address">{{ card.Details }}</div>
 			<div class="bottom flex_betwen line_top">
 				<div class="set_btn flex_start active">
 					<div class="square"><img src="../assets/common_hook_white.png"></div>
@@ -25,33 +25,12 @@
 			</div>
 		</div>
 
-		<div class="address_card">
-			<div class="top flex_betwen">
-				<div class="name">夜猫子</div>
-				<div class="phone">15454245654</div>
-			</div>
-			<div class="address">浙江省宁波市慈溪市古塘街道北三环东路888号联盛大厦1号门 10楼1018</div>
-			<div class="bottom flex_betwen line_top">
-				<div class="set_btn flex_start">
-					<div class="square"><img src="../assets/common_hook_white.png"></div>
-					<div class="title">设为默认</div>
-				</div>
-				<div class="bottom_right flex_end">
-					<div class="pic_btn flex_center">
-						<div class="icon"><img src="../assets/edit_icon.png"></div>
-						<div class="title">编辑</div>
-					</div>
-					<div class="pic_btn flex_center">
-						<div class="icon"><img src="../assets/garbage_icon.png"></div>
-						<div class="title">删除地址</div>
-					</div>
-				</div>
-			</div>
-		</div>
+	</div>
+	<div>
 
-	</div>	
+	</div>
 
-	<router-link tag="div" to="/address/addAddress" class="add_btn flex_center line_top">
+	<router-link tag="div" to="/address/addAddress/add" class="add_btn flex_center line_top">
 		<div class="add_icon"><img src="../assets/common_add_red.jpg"></div><div>添加地址</div>
 	</router-link>
 </div>
@@ -63,11 +42,52 @@ export default {
   name: 'ManageAddress',
   data () {
     return {
-
+		addressCards:[]
     }
   },
   methods:{
-    
+	  getAddresses(){
+		let token=this.getToken();
+		if(!token){//如果没有token就直接跳到登录页面
+			this.goSignIn();
+			return;
+		}
+		this.$http.get(`http://api.lingkuaiyou.com/User/GetUserAddressList?token=${token}`).then(function(data){
+			//let body=JSON.parse(data.bodyText);
+			console.log(data.body)
+			if(data.body.result){//成功获取个人信息，这表明该用户登录成功
+				//MessageBox('提示', '登录成功！');
+				//console.log(body.data);
+				//localStorage.setItem("token",body.data);
+				//this.$router.replace('/me');
+				let addresses=data.body.data.DataList;
+				let len=addresses.length;
+				for(let i=0;i<len;i++){
+					this.addressCards.push(addresses[i])
+				}
+			}else{
+				//this.goSignIn();
+			}
+		}).catch(function(err){
+			console.log(err)
+		})
+	 },
+  	  getToken(){//获得本地的token
+		let token=localStorage.getItem('token');
+		if(token===null || token===''){
+			return false;
+		}
+		return encodeURIComponent(token);
+	  },
+	  goSignIn(){//跳转到登录页面
+		this.$router.push({
+			path:'/sign/signIn',
+			query: { redirect: this.$route.fullPath }
+		});//'/sign/signIn'
+	  }
+	},
+  created(){
+	  this.getAddresses();
   }
 
 }

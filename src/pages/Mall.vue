@@ -6,8 +6,8 @@
 	<header>
 		<div class="search_bar_box red_bar_box flex_center">
 			<div class="follow_btn">关注</div>
-			<router-link class="search_bar" tag="div" to="/search/guide">输入你想要搜索的东西</router-link>
-			<router-link class="search_btn" tag="div" to="/search/guide"><img src="../assets/common_search_white.png"></router-link>
+			<router-link class="search_bar" tag="div" to="/search">输入你想要搜索的东西</router-link>
+			<router-link class="search_btn" tag="div" to="/search"><img src="../assets/common_search_white.png"></router-link>
 		</div>
 	</header>
 
@@ -106,10 +106,10 @@ export default {
 			return;
 		}
 		this.stopLoad=true;
-		this.$http.get(`http://api.lingkuaiyou.com/Goods/GetGoodsList?pageIndex=${this.pageIndex}&pageSize=12`)
+		this.$http.get(`http://api.lingkuaiyou.com/Goods/GetHomeGoods?pageIndex=${this.pageIndex}`)
 		.then((data)=>{
 			let body=JSON.parse(data.bodyText)
-			console.log('发送ajax')
+			//console.log('这里没有缓存')
 			//console.log(body.result);
 			//console.log('这是本次传过来的商品个数'+body.data.DataList.length)
 			if( body.result ){

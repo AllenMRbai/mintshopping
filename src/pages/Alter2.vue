@@ -1,10 +1,10 @@
 <template>
 <div>
   <div class="title">验证码已发送至</div>
-  <div class="title2">+86 <span>{{ registerNumber }}</span></div>
+  <div class="title2">+86 <span>{{ ChangePasswordPhone }}</span></div>
  
   <div class="input_box">
-    <validation-bar placeholder="验证码" @text-change="getVerifyCode" :phone="registerNumber"></validation-bar>
+    <validation-bar placeholder="验证码" @text-change="getVerifyCode" :phone="ChangePasswordPhone"></validation-bar>
     <password-bar placeholder="输入新密码" @text-change="getPassword"></password-bar>
   </div>
 
@@ -20,7 +20,7 @@ import { MessageBox,Indicator } from 'mint-ui';
 import { md5 } from '@/assets/js/tools.js'
 
 export default {
-  name: 'SignIn',
+  name: 'Alter2',
   components:{
     ValidationBar,
     PasswordBar
@@ -39,11 +39,14 @@ export default {
       this.verifyCode=text;
     },
     login:function(){
+      if(!this.canNext){
+        return;
+      }
       var wrongMessage=this.frontValidate()
       if(!wrongMessage){
         let md5_password=md5(this.password);
         //console.log(md5_password);
-        this.$http.get(`http://api.lingkuaiyou.com/User/Register?mobile=${this.registerNumber}&code=${this.verifyCode}&password=${md5_password}`).then(function(data){
+        this.$http.get(`http://api.lingkuaiyou.com/User/FindPassword?mobile=${this.ChangePasswordPhone}&code=${this.verifyCode}&password=${md5_password}`).then(function(data){
           let body=JSON.parse(data.bodyText);
           if(body.result){
             //发送成功
@@ -73,10 +76,10 @@ export default {
     canNext(){
       return this.password && this.verifyCode; 
     },
-    registerNumber(){
-      var reg=sessionStorage.getItem('registerPhoneNumber');
+    ChangePasswordPhone(){
+      var reg=sessionStorage.getItem('ChangePasswordPhone');
       if(reg===null){
-        this.$router.replace('/sign/signUp1');
+        this.$router.replace('/sign/alter1');
       }
       return reg;
     }

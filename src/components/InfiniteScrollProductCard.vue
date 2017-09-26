@@ -6,10 +6,10 @@
             v-if="haveProducts" 
             v-infinite-scroll="loadMore" 
             :infinite-scroll-disabled="loading" 
-            infinite-scroll-distance="0">
+            infinite-scroll-distance="200">
 
             <router-link tag="div" :to="`/productDetail/${card.ID}`" class="product_card" v-for="card in cards" :key="card.ID">
-                <div class="pro_pic"><img v-lazy.product-card="card.Pic"></div>
+                <div class="pro_pic flex_center"><img v-lazy.product-card="card.Pic"></div>
                 <div class="pro_name">{{ card.Title }}</div>
                 <h3>￥<span>{{ card.Price }}</span></h3>
             </router-link> 
@@ -66,6 +66,13 @@ export default {
 </script>
 
 <style scoped>
+.pro_pic img{
+    width: auto;
+    height: auto;
+    margin:auto auto;
+    max-width: 100%;
+    display: block;
+}
 /*可加载的产品卡片*/
 .pro_pic image[lazy=loading] {
   width: 20px;
@@ -115,6 +122,7 @@ export default {
 	padding:6px 0;
 	font-size: 14px;
 }
+/* 加载提示 */
 .load_tips{
     background-color: #fff;
     height: 30px;
@@ -122,6 +130,7 @@ export default {
     font-size: 15ox;
     line-height: 30px;
 }
+/* 缺省页面 */
 .default_page{
     height: 30px;
     text-align: center;

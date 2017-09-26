@@ -3,8 +3,8 @@
   <header class="line_bottom">
 		<div class="search_bar_box white_bar_box flex_center ">
 			<div class="follow_btn">关注</div>
-			<router-link class="search_bar" tag="div" to="/search/guide">输入你想要搜索的东西</router-link>
-			<router-link class="search_btn" tag="div" to="/search/guide"><img src="../assets/common_search_black.png"></router-link>
+			<router-link class="search_bar" tag="div" to="/search">输入你想要搜索的东西</router-link>
+			<router-link class="search_btn" tag="div" to="/search"><img src="../assets/common_search_black.png"></router-link>
 		</div>
 	</header>
   <!-- 主体部分 -->

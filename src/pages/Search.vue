@@ -4,45 +4,70 @@
 		<div class="search_bar_box white_bar_box flex_center ">
 			<div class="follow_btn">关注</div>
             <label class="search_bar">
-                <input type="text" placeholder="输入你想搜索的东西">
+                <input type="text" placeholder="输入你想搜索的东西" id="search_input">
             </label>
-			<router-link class="search_btn" tag="div" to="/search/searchResult"><img src="../assets/common_search_black.png"></router-link>
+			<div class="search_btn" @click="searchBtn"><img src="../assets/common_search_black.png"></div>
 		</div>
 	</header>
 
-    <transition appear>
-        <keep-alive> 
-            <router-view></router-view>
-        </keep-alive>
-    </transition>
-
+    <search-guide v-if="nowPage===0" @go-to='goTo'></search-guide>
+    <search-reasult :key-word='keyWord' @sort-search='changeKey' v-else></search-reasult>
 </div>
     
+
 </template>
 
 <script>
-
+import SearchGuide from '@/components/SearchGuide';
+import SearchReasult from '@/components/SearchReasult';
 
 export default {
+  name:'Search',
+  components:{
+      SearchGuide,
+      SearchReasult
+  },
   data () {
     return {
-
+        nowPage:0,
+        keyWord:'',
     }
   },
   methods:{
-
+      searchBtn(){
+          let kword=document.getElementById('search_input').value.trim();
+          if(kword===''){
+            return;
+          }
+          this.nowPage=1;
+          this.addHistory(kword)
+          this.keyWord=kword;
+          console.log('我想搜索'+this.keyWord)
+      },
+      addHistory(kword){
+		  let historys=localStorage.getItem('historys');
+		  if(historys==null){
+			historys=localStorage.setItem('historys','[]');
+		  }
+		  let phistorys=JSON.parse(historys);
+		  if(phistorys.some(function(a){return a==kword;})){
+			return;
+		  }else{
+			phistorys.push(kword);
+			localStorage.setItem('historys',JSON.stringify(phistorys));
+		  }  
+      },
+      goTo(text){
+          document.getElementById('search_input').value=text;
+          this.searchBtn();
+      },
+      changeKey(){
+          document.getElementById('search_input').value=this.keyWord;
+      }
   },
-  computed:{
-
-  },
-  beforeUpdate(){
-      //获得当前路由的name
-	//   this.pageNow=this.$route.name.toLocaleLowerCase();
-	  //console.log(this.$route.name.toLocaleLowerCase())
-  },
-  created(){
-      //获得当前路由的name
-    //   this.pageNow=this.$route.name.toLocaleLowerCase();  
+  mounted(){
+      let inp=document.getElementById('search_input');
+      inp.focus();
   }
 }
 </script>

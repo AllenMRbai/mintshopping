@@ -2,7 +2,7 @@
 <div>
 	<!-- 产品图片和简介 -->
     <div class="pro_pic_box">
-        <router-link tag="div" to="/search/guide" class="search_btn"><img src="../assets/common_search_white.png"></router-link>
+        <router-link tag="div" to="/search" class="search_btn"><img src="../assets/common_search_white.png"></router-link>
         <img :src="productDetail.Pic">
     </div>
     <div class="pro_detail_box">
@@ -32,7 +32,7 @@
 		
 	</div>
 	<div class="sub_page" v-else><!-- 相似商品卡片 -->
-    	<product-card></product-card>
+		<product-card :cards='similarProduct'></product-card>
 	</div>
 
     <!-- 商品推荐 -->
@@ -44,7 +44,7 @@
             <div class="did_line"></div>
         </div>
     </div>
-    <product-card></product-card><!-- 商品推荐卡片 -->
+    <product-card :cards='productRecomend'></product-card><!-- 商品推荐卡片 -->
 	
 
     <div style="height: 46px;"></div>
@@ -118,9 +118,11 @@ export default {
 		nowPage:0,//子页面的当前页面索引 0表示商品详情 1表示购物须知 2表示相似商品
 		showPurchasePanel:false,//是否打开购买面板
 		productId:'',
-		productDetail:{},
+		productDetail:{},//ajax请求的商品详情
 		showToToP:false,
-		proDetPics:[]
+		proDetPics:[],//ajax请求的商品图片
+		productRecomend:[],//ajax请求的商品推荐
+		similarProduct:[]
     }
       
   },
@@ -140,12 +142,11 @@ export default {
 		  this.showPurchasePanel=false;
 	  },
 	  getGoodsInfo(){
+		  this.proDetPics.splice(0,this.proDetPics.length);
 		  this.$http.get(`http://api.lingkuaiyou.com/Goods/GetGoodsInfo?id=${this.productId}`)
 		  .then((data)=>{
 			  let body=JSON.parse(data.bodyText);
 			  this.productDetail=body.data;
-			  let detPicBox=document.getElementsByClassName('detail_pic_box')[0];
-			  //detPicBox.innerHTML=body.data.TaoBao_details
 			  let str=body.data.TaoBao_details;
 			  let reg=/src="([^"\r\n]*)"/g;
 			  let result;
@@ -159,14 +160,49 @@ export default {
 			  console.log(err);
 		  })
 	  },
+	  getProductRecomend(){
+		  this.$http.get(`http://api.lingkuaiyou.com/Goods/GetGoodsList?pageSize=4`)
+		  .then((data)=>{
+			  let body=JSON.parse(data.bodyText);
+			  this.productRecomend=body.data.DataList;
+			  //console.log(this.productRecomend)
+			  //console.log(body.data.TaoBao_details)
+		  })
+		  .catch((err)=>{
+			  console.log(err);
+		  })
+	  },
+	  getSimilarProduct(){
+		  this.$http.get(`http://api.lingkuaiyou.com/Goods/GetGuessYouLike?id=${this.$route.params.productId}`)
+		  .then((data)=>{
+			  let body=JSON.parse(data.bodyText);
+			  this.similarProduct=body.data.DataList;
+			  //console.log(body)
+			  //console.log(body.data.TaoBao_details)
+		  })
+		  .catch((err)=>{
+			  console.log(err);
+		  })
+	  },
 	  goToTop(){
 		  document.body.scrollTop=0;
 	  }
   },
+  watch: {
+    '$route' (to, from) {
+      this.productId=this.$route.params.productId;
+	  this.getGoodsInfo();//获得商品详情数据
+	  this.getProductRecomend();//获得商品推荐数据
+	  this.getSimilarProduct();//获得相似商品
+	  console.log('不好意思，我也触发了')
+    }
+  },
   created(){
      //获得当前路由的name
 	 this.productId=this.$route.params.productId;
-	 this.getGoodsInfo();
+	 this.getGoodsInfo();//获得商品详情数据
+	 this.getProductRecomend();//获得商品推荐数据
+	 this.getSimilarProduct();//获得相似商品
 	 document.body.onscroll=()=>{
 		 if(document.body.scrollTop>300){
 			 this.showToToP=true;
@@ -266,8 +302,10 @@ image[lazy=loading] {
 }
 /*商品详情page*/
 .detail_pic_box img{
-	width: 100%;
+	width: auto;
 	height: auto;
+	max-width:100%;
+	margin:0 auto;
 }
 
 /*商品推荐*/

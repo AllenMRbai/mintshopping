@@ -39,6 +39,9 @@ export default {
       this.verifyCode=text;
     },
     login:function(){
+      if(!this.canNext){
+        return;
+      }
       var wrongMessage=this.frontValidate()
       if(!wrongMessage){
         let md5_password=md5(this.password);
@@ -47,6 +50,7 @@ export default {
           let body=JSON.parse(data.bodyText);
           if(body.result){
             //发送成功
+            sessionStorage.removeItem('registerPhoneNumber');
             localStorage.setItem("token",body.data);
             this.$router.replace('/me');
           }else{

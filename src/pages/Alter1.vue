@@ -23,7 +23,7 @@ import PasswordBar from '@/components/PasswordBar'
 import { MessageBox,Indicator } from 'mint-ui';
 
 export default {
-  name: 'SignIn',
+  name: 'Alter1',
   components:{
     TextBar,
     PasswordBar
@@ -42,7 +42,7 @@ export default {
         return;
       }
       if(this.frontValidate2()){
-        sessionStorage.setItem("registerPhoneNumber", this.phone);
+        sessionStorage.setItem("ChangePasswordPhone", this.phone);
         Indicator.open();
         this.$http.get(`http://api.lingkuaiyou.com/User/SendCode?mobile=${this.phone}`).then(function(data){
           Indicator.close();
@@ -74,6 +74,9 @@ export default {
       return (this.phone.length==11)
     }
   },
+  watch:{
+
+  }
 }
 
 </script>

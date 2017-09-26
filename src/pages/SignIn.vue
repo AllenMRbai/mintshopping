@@ -16,6 +16,7 @@
 <script>
 import TextBar from '@/components/TextBar'
 import PasswordBar from '@/components/PasswordBar'
+import { md5 } from '@/assets/js/tools.js'
 import { MessageBox,Indicator } from 'mint-ui';
 
 export default {
@@ -40,12 +41,18 @@ export default {
     login:function(){
       if(this.frontValidate()){
         Indicator.open();
-        this.$http.get(`http://api.lingkuaiyou.com/User/Login?mobile=${this.account}&password=${this.password}`).then(function(data){
+        
+        let md5_password=md5(this.password);
+        console.log(md5_password)
+        this.$http.get(`http://api.lingkuaiyou.com/User/Login?mobile=${this.account}&password=${md5_password}`).then(function(data){
           Indicator.close();
           let body=JSON.parse(data.bodyText);
+          console.log(data.bodyText)
           if(body.result){
-            MessageBox('提示', '登录成功！');
-            console.log(body.data);
+            //MessageBox('提示', '登录成功！');
+            //console.log(body.data);
+            localStorage.setItem("token",body.data);
+            this.$router.replace('/me');
           }else{
             MessageBox('提示', body.message);
           }

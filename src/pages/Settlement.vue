@@ -3,12 +3,12 @@
     <!-- 收货地址面板 -->
     <router-link tag="div" to="/address" class="adress_pannel">
         <div class="top flex_betwen">
-            <div class="name">夜猫子</div>
-            <div class="phone">1575782451</div>
+            <div class="name">{{ addressMessage.name }}</div>
+            <div class="phone">{{ addressMessage.phone }}</div>
         </div>
         <div class="bottom flex_betwen">
             <div class="icon_position"><img src="../assets/common_position_grey.png"></div>
-            <div class="adress">浙江省宁波市慈溪市古塘街道北三环东路888号联盛大厦1号门 10楼1018</div>
+            <div class="adress" :class="{'text_center':!addressMessage.haveDefault}">{{ addressMessage.address }}</div>
             <div class="icon_go"><img src="../assets/common_rightarrow_grey.png"></div>
         </div>
     </router-link>
@@ -64,7 +64,13 @@ export default {
   },
   data () {
     return {
-
+	    addressMessage:{
+		  phone:'',
+		  name:'',
+		  address:'点击添加收货地址',
+		  haveDefault:false
+		},
+		
     }
       
   },
@@ -86,6 +92,14 @@ export default {
 <style scoped>
 
 /*收货地址面板*/
+.adress_pannel .bottom .adress.text_center{
+	text-align: center;
+	font-size: 16px;
+	line-height: 60px;
+	font-weight: bold;
+	color: #666;
+	height: 60px;
+}
 .adress_pannel{
 	background-color: #fff;
 	width: 100%;

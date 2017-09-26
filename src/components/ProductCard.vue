@@ -4,27 +4,11 @@
 <div class="product_card_box"><!-- 不可加载盒子 -->
     <!-- 加载内容盒子 -->
     <div class="flex_box flex_betwen cantload_content_box">
-        <div class="product_card">
-            <div class="pro_pic"><img src="../assets/product.jpeg"></div>
-            <div class="pro_name">江南古韵床上纯棉十件套被套整套床单枕头凉席卡了按时缴费啊是就</div>
-            <h3>￥<span>156</span></h3>
-        </div>
-        <div class="product_card">
-            <div class="pro_pic"><img src="../assets/product.jpeg"></div>
-            <div class="pro_name">江南古韵床上纯棉十件套被套整套床单枕头凉席卡了按时缴费啊是就</div>
-            <h3>￥<span>156</span></h3>
-        </div>
-        <div class="product_card">
-            <div class="pro_pic"><img src="../assets/product.jpeg"></div>
-            <div class="pro_name">江南古韵床上纯棉十件套被套整套床单枕头凉席卡了按时缴费啊是就</div>
-            <h3>￥<span>156</span></h3>
-        </div>
-        <div class="product_card">
-            <div class="pro_pic"><img src="../assets/product.jpeg"></div>
-            <div class="pro_name">江南古韵床上纯棉十件套被套整套床单枕头凉席卡了按时缴费啊是就</div>
-            <h3>￥<span>156</span></h3>
-        </div>
-        
+        <router-link tag="div" :to="`/productDetail/${card.ID}`" class="product_card" v-for="(card,index) in cards" :key="index">
+            <div class="pro_pic"><img :src="card.Pic"></div>
+            <div class="pro_name">{{ card.Title }}</div>
+            <h3>￥<span>{{ card.Price }}</span></h3>
+        </router-link>    
     </div>
 </div>
 
@@ -34,9 +18,11 @@
 <script>
 
 export default {
-  name:'SimilarGoods',
-  components:{
-	  
+  name:'ProductCard',
+  props:{
+      cards:{
+          type:Array
+      }
   },
   data () {
     return {
@@ -44,9 +30,7 @@ export default {
     }
       
   },
-  created(){
 
-  }
 }
 </script>
 

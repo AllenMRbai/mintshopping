@@ -1,8 +1,8 @@
 <template>
     <transition>
-        <keep-alive> 
+        <!-- <keep-alive>  -->
             <router-view></router-view>
-        </keep-alive>
+        <!-- </keep-alive> -->
     </transition>
 </template>
 
@@ -12,7 +12,6 @@ export default {
   name: 'AddressPage',
   data () {
     return {
-
     }
   },
   methods:{

@@ -28,9 +28,11 @@ import SignUp2 from '@/pages/SignUp2'
 import Alter1 from '@/pages/Alter1'
 import Alter2 from '@/pages/Alter2'
 //搜索页面
-import SearchPage from '@/pages/SearchPage'
-import Guide from '@/pages/Guide'
-import SearchResult from '@/pages/SearchResult'
+// import SearchPage from '@/pages/SearchPage'
+// import Guide from '@/pages/Guide'
+// import SearchResult from '@/pages/SearchResult'
+import Search from '@/pages/Search'
+
 //商品详情页
 import DetailPage from '@/pages/DetailPage'
 //结算页面
@@ -45,8 +47,10 @@ import AddressPage from '@/pages/AddressPage'
 import Logistics from '@/pages/Logistics'
 Vue.use(Router)
 
-export default new Router({
+let router= new Router({
+  //使用H5的history模式
   mode:'history',
+  //记录滚动高度，并滚动到对应的高度
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       console.log()
@@ -58,6 +62,7 @@ export default new Router({
       }
     }
   },
+  //路由配置
   routes: [
     {
       path: '/hello',
@@ -83,7 +88,8 @@ export default new Router({
         {
           path:'me',
           name:'Me',//个人中心
-          component:Me
+          component:Me,
+          // meta: { requiresAuth: true }
         }
       ]
     },
@@ -187,20 +193,9 @@ export default new Router({
     //搜索页面
     {
       path:'/search',
-      component:SearchPage,
-      children:[
-        {
-          path:'guide',
-          name:'Guide',//搜索引导页
-          component:Guide
-        },
-        {
-          path:'searchResult',
-          name:'SearchResult',//搜索结果页
-          component:SearchResult
-        }
-
-      ]
+      name:'Search',
+      component:Search,
+      
     },
     //商品详情页
     {
@@ -228,12 +223,14 @@ export default new Router({
         {
           path:'',
           name:'ManageAddress',//地址管理
-          component:ManageAddress
+          component:ManageAddress,
+          meta: { requiresAuth: true }
         },
         {
-          path:'addAddress',
+          path:'addAddress/:id',
           name:'AddAddress',//添加地址
-          component:AddAddress
+          component:AddAddress,
+          meta: { requiresAuth: true }
         }
       ]
     },
@@ -245,3 +242,31 @@ export default new Router({
     }
   ]
 })
+
+let auth=new Object();
+auth.loggedIn=function(){
+  let token=localStorage.getItem('token');
+  return token;
+}
+//当跳转到配置了路由元信息的页面，需要先判断用户是否登录，未登录的界面将重定向到登录页面
+router.beforeEach((to, from, next) => {
+  console.log(to)
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    // this route requires auth, check if logged in
+    // if not, redirect to login page.
+    //console.log('这是来着index的跳转'+!auth.loggedIn())
+    if (!auth.loggedIn()) {
+      next({
+        path: '/sign/signIn',
+        query: { redirect: to.fullPath }
+      })
+    } else {
+      next()
+    }
+  } else {
+    next() // 确保一定要调用 next()
+  }
+})
+
+export default router;
+

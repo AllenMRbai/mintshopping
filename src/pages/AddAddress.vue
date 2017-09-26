@@ -7,9 +7,9 @@
 		<label class="list line_bottom">
 			<input type="text" placeholder="手机号" class="input_list">
 		</label>
-		<div class="list line_bottom">
-			<input type="text" placeholder="省 市 区" class="input_list">
-		</div>
+		<label class="list line_bottom" @click="showLocation">
+			<input type="text" placeholder="省 市 区" class="input_list" readonly='readonly' id="nono">
+		</label>
 		<textarea placeholder="详细地址" class="text_box"></textarea>
 	</div>
 
@@ -27,7 +27,18 @@ export default {
     }
   },
   methods:{
-    
+	addOrChange(){
+      
+      console.log(this.$route)
+      
+    },
+    showLocation(e){
+      e.preventDefault();
+      console.log('哈哈哈啊哈哈')
+    }
+  },
+  created(){
+    this.addOrChange();
   }
 
 }

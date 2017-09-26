@@ -42,7 +42,7 @@
 			<div class="btn red" id="identifyBtn" @click="startRegion">确定</div>
 		</div>	
 	</div>
-    <infinite-scroll-product-list :lists='productLists'></infinite-scroll-product-list>
+    <infinite-scroll-product-list :lists='productLists' :loading='stopLoad' :no-more='noMore' @load-more='loadMore(keyWord)'></infinite-scroll-product-list>
 </div>
     
 </template>
@@ -51,14 +51,19 @@
 import InfiniteScrollProductList from '@/components/InfiniteScrollProductList';
 
 export default {
-  name:'SearchResult',
+  name:'SearchReasult',
   components:{
       InfiniteScrollProductList
+  },
+  props:{
+      'keyWord':{
+          type:String
+      }
   },
   data () {
     return {
         screenOut:{
-            type:"价格由高到低",
+            type:"综合排序",
             min:"",
             max:""
         },
@@ -70,14 +75,11 @@ export default {
             "价格由低到高"
         ],
         showSortBox:false,
-        showRegionBox:false,
-        productLists:[
-		  {proName:"江南古韵床上纯棉十件套被套整套床单枕头凉席卡了按时缴费啊是就",price:124,sale:230,pic:'../../static/img/product.jpeg',id:'asdf456546467'},
-		  {proName:"江南古韵床上纯棉十件套被套整套床单枕头凉席卡了按时缴费啊是就",price:200,sale:230,pic:'../../static/img/product.jpeg',id:'asdf456546468'},
-		  {proName:"江南古韵床上纯棉十件套被套整套床单枕头凉席卡了按时缴费啊是就",price:124,sale:230,pic:'../../static/img/product.jpeg',id:'asdf456546467'},
-		  {proName:"江南古韵床上纯棉十件套被套整套床单枕头凉席卡了按时缴费啊是就",price:200,sale:230,pic:'../../static/img/product.jpeg',id:'asdf456546468'}
-	    ],
-        
+		showRegionBox:false,
+		pageIndex:1,
+	    stopLoad:false,//用来判断现在是否可以加载,true表示停止加载
+	    noMore:false,//true表示没有更多商品了
+		productLists:[]//产品lists    
     }
   },
   computed:{
@@ -99,10 +101,14 @@ export default {
       setSalePri(){
           this.screenOut.type="销量优先";
           this.closeAllBox();
+          this.initPriRegion();//初始化价格区间
+          this.commonSearch();//重新搜索排序
       },
       setSortPri(type){
            this.screenOut.type=type;
            this.closeAllBox();
+            this.initPriRegion();//初始化价格区间
+           this.commonSearch();//重新搜索排序
       },
       toggleSortBox(){
           this.showSortBox=!this.showSortBox;
@@ -118,14 +124,17 @@ export default {
       },
       startRegion(){
           var temp;
-          if(this.minPrice>this.maxPrice){
-            temp=this.minPrice;
-            this.minPrice=this.maxPrice;
-            this.maxPrice=temp;
+          if(this.maxPrice!==''){
+              if(this.minPrice>this.maxPrice){
+                temp=this.minPrice;
+                this.minPrice=this.maxPrice;
+                this.maxPrice=temp;
+            }
           }
           this.screenOut.min=this.minPrice;
           this.screenOut.max=this.maxPrice;
           this.closeAllBox();
+          this.commonSearch();//重新搜索排序
       },
       reRegion(){
           this.screenOut.min="";
@@ -133,10 +142,83 @@ export default {
           this.minPrice="";
           this.maxPrice="";
           this.closeAllBox();
+          this.commonSearch();//重新搜索排序
+	  },
+	  loadMore(kword){
+		if(this.noMore){//没有更多商品的时候，不能发送请求
+			return;
+		}
+		if(this.stopLoad){//停止加载的时候，不能发送请求
+			return;
+        }
+        //console.log('我没在偷懒')
+        let sortMap={
+            '综合排序':0,
+            '销量优先':1,
+            '价格由低到高':2,
+            '价格由高到低':3
+        }
+		this.stopLoad=true;//开启停止加载，防止恶性加载
+		this.$http.get(`http://api.lingkuaiyou.com/Goods/GetGoodsList?name=${kword}&pageIndex=${this.pageIndex}&state=${sortMap[this.screenOut.type]}&startpri=${this.screenOut.min}&endpri=${this.screenOut.max}`)//${sortMap[this.screenOut.type]}
+		.then((data)=>{
+			let body=JSON.parse(data.bodyText)
+			console.log(body)
+			if( body.result ){
+				let productLists=body.data.DataList;
+				let len=productLists.length;
+				if(len>0){
+					for(let i=0;i<len;i++){
+						this.productLists.push(productLists[i]);
+					}
+					this.pageIndex++;
+					this.stopLoad=false;
+					//console.log(this.pageIndex);
+				}else{
+					this.noMore=true;//表示没有更多商品了
+				}
+			}else{//没有更多商品了
+				this.stopLoad=true;//阻止继续加载
+				this.noMore=true;//表示没有更多商品了
+			}
+		},(err)=>{
+			console.log(err);
+		})
+      },
+      initPage(){//初始化页面的页码和是否可加载
+        this.pageIndex=1;
+	    this.stopLoad=false;//用来判断现在是否可以加载,true表示停止加载
+        this.noMore=false;//true表示没有更多商品了
+		this.productLists.splice(0,this.productLists.length)//产品lists
+      },
+      initType(){//初始化排序
+          this.screenOut.type="综合排序";
+          this.screenOut.min='';
+          this.screenOut.max='';
+      },
+      commonSearch(){//给排序和筛选用的
+          this.$emit('sort-search');
+          this.initPage();
+          this.loadMore(this.keyWord);
+      },
+      initPriRegion(){//重新排序的时候需要重置筛选
+          this.screenOut.min='';
+          this.screenOut.max='';
+          this.minPrice="";
+          this.maxPrice="";
       }
-  },
-  watch:{
 
+  },
+  watch: {
+    keyWord(){
+        this.initType();
+        this.initPage();
+        this.loadMore(this.keyWord);
+    }
+  },
+  created(){
+      this.initType();
+      this.initPage();
+      this.loadMore(this.keyWord);
   }
 }
 </script>
