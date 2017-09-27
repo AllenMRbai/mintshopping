@@ -28,11 +28,7 @@ import SignUp2 from '@/pages/SignUp2'
 import Alter1 from '@/pages/Alter1'
 import Alter2 from '@/pages/Alter2'
 //搜索页面
-// import SearchPage from '@/pages/SearchPage'
-// import Guide from '@/pages/Guide'
-// import SearchResult from '@/pages/SearchResult'
 import Search from '@/pages/Search'
-
 //商品详情页
 import DetailPage from '@/pages/DetailPage'
 //结算页面
@@ -45,6 +41,11 @@ import ManageAddress from '@/pages/ManageAddress'
 import AddressPage from '@/pages/AddressPage'
 //物流详情
 import Logistics from '@/pages/Logistics'
+//个人中心其他
+import TheOther from '@/pages/TheOther'
+import Help from '@/pages/Help'
+
+
 Vue.use(Router)
 
 let router= new Router({
@@ -239,6 +240,18 @@ let router= new Router({
       path:'/logistics',
       name:'Logistics',
       component:Logistics
+    },
+    //个人中心其他
+    {
+      path:'/theOther',
+      component:TheOther,
+      children:[
+        {
+          path:'help',
+          name:'Help',//帮助页面
+          component:Help
+        }
+      ]
     }
   ]
 })

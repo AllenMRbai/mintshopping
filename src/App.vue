@@ -52,6 +52,20 @@ img{width: 100%;border:0;display: block;height: auto}
 .mint-msgbox-confirm{
 	color:#ff0036;
 }
+.mint-popup.mint-popup-bottom{
+	width: 100%;
+	width: 100vw;
+}
+.picker-items .picker-item{
+	color: #b2b2b2;
+}
+.picker-items .picker-item.picker-selected{
+	color: #333333;
+}
+.picker-items .picker-center-highlight{
+	background-color: #f0f0f0;
+	z-index: -10
+}
 
 /* 公共样式 */
 .flex_betwen{display: flex;justify-content: space-between;align-items: center;}
@@ -74,7 +88,7 @@ img{width: 100%;border:0;display: block;height: auto}
 	bottom:0;
 	left: 0;
 	width: 100%;
-	z-index: 2;
+	z-index: 0;
 	-webkit-transform-origin: 50% 100%;
 	transform-origin: 50% 100%;
 	pointer-events: none;
@@ -90,7 +104,7 @@ img{width: 100%;border:0;display: block;height: auto}
 	bottom:auto;
 	left: 0;
 	width: 100%;
-	z-index: 2;
+	z-index: 0;
 	-webkit-transform-origin: center top;
 	transform-origin:center top;
 	pointer-events: none;

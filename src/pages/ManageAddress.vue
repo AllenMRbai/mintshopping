@@ -19,16 +19,14 @@
 					</div>
 					<div class="pic_btn flex_center">
 						<div class="icon"><img src="../assets/garbage_icon.png"></div>
-						<div class="title">删除地址</div>
+						<div class="title" @click="removeAddress(card.ID,index)">删除地址</div>
 					</div>
 				</div>
 			</div>
 		</div>
 
 	</div>
-	<div>
-
-	</div>
+	<div style="height:50px;"></div>
 
 	<router-link tag="div" to="/address/addAddress/add" class="add_btn flex_center line_top">
 		<div class="add_icon"><img src="../assets/common_add_red.jpg"></div><div>添加地址</div>
@@ -37,6 +35,7 @@
 </template>
 
 <script>
+import { MessageBox,Indicator } from 'mint-ui';
 
 export default {
   name: 'ManageAddress',
@@ -84,6 +83,39 @@ export default {
 			path:'/sign/signIn',
 			query: { redirect: this.$route.fullPath }
 		});//'/sign/signIn'
+	  },
+	  removeAddress(id,ind){
+		MessageBox.confirm('确定删除该地址?').then(action => {
+			let token=this.getToken()
+			if(!token){//本地没token return 并跳转到登录页面
+				this.goSignIn();
+				return;
+			}
+			Indicator.open();
+			this.$http.get(`http://api.lingkuaiyou.com/User/DelUserAddress?token=${token}&id=${id}`).then(function(data){
+				Indicator.close();
+				if(data.body.result){//删除成功
+					this.addressCards.splice(ind,1);
+				}else{
+					MessageBox(' ', data.body.message);
+				}
+			})
+		}).catch(function(err){
+
+		});
+	  },
+	  getToken(){//获得本地的token
+			let token=localStorage.getItem('token');
+			if(token===null || token===''){
+				return false;
+			}
+			return encodeURIComponent(token);
+	  },
+	  goSignIn(){//跳转到登录页面
+			this.$router.push({
+				path:'/sign/signIn',
+				query: { redirect: this.$route.fullPath }
+			});//'/sign/signIn'
 	  }
 	},
   created(){

@@ -73,11 +73,11 @@ export default {
         {title:'退货/退款',dot:0,link:'/orders/allOrders'}
       ],
       options:[
-        {title:'收货地址管理',icon:require('../assets/me_icons_5.jpg'),link:'/sign/alter1'},
-        {title:'关注公众号',icon:require('../assets/me_icons_4.jpg'),link:'/sign/alter1'},
+        {title:'收货地址管理',icon:require('../assets/me_icons_5.jpg'),link:'/address'},
+        {title:'关注公众号',icon:require('../assets/me_icons_4.jpg'),link:'/theOther/help'},
         {title:'密码修改',icon:require('../assets/me_icons_3.jpg'),link:'/sign/alter1'},
         {title:'用户反馈',icon:require('../assets/me_icons_2.jpg'),link:'/sign/alter1'},
-        {title:'帮助',icon:require('../assets/me_icons_1.jpg'),link:'/sign/alter1'},
+        {title:'帮助',icon:require('../assets/me_icons_1.jpg'),link:'/theOther/help'},
         {title:'客服',icon:require('../assets/me_icons_0.jpg'),link:'/sign/alter1'}
       ]
     }
