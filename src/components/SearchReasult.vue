@@ -42,7 +42,7 @@
 			<div class="btn red" id="identifyBtn" @click="startRegion">确定</div>
 		</div>	
 	</div>
-    <infinite-scroll-product-list :lists='productLists' :loading='stopLoad' :no-more='noMore' @load-more='loadMore(keyWord)'></infinite-scroll-product-list>
+    <infinite-scroll-product-list :lists='productLists' :loading='stopLoad' :no-more='noMore' :no-product='noProduct' @load-more='loadMore(keyWord)'></infinite-scroll-product-list>
 </div>
     
 </template>
@@ -74,11 +74,14 @@ export default {
             "价格由高到低",
             "价格由低到高"
         ],
-        showSortBox:false,
-		showRegionBox:false,
-		pageIndex:1,
+        showSortBox:false,//true表示显示排序面板
+		showRegionBox:false,//true表示筛选面板
+		pageIndex:1,//表示当前页码
+
+		//以下为无限滚动盒子的参数
 	    stopLoad:false,//用来判断现在是否可以加载,true表示停止加载
-	    noMore:false,//true表示没有更多商品了
+		noMore:false,//true表示没有更多商品了
+		noProduct:false,//true表示没搜索到任何商品，这将会显示缺省页面
 		productLists:[]//产品lists    
     }
   },
@@ -157,12 +160,13 @@ export default {
             '销量优先':1,
             '价格由低到高':2,
             '价格由高到低':3
-        }
+		}
+		
 		this.stopLoad=true;//开启停止加载，防止恶性加载
 		this.$http.get(`http://api.lingkuaiyou.com/Goods/GetGoodsList?name=${kword}&pageIndex=${this.pageIndex}&state=${sortMap[this.screenOut.type]}&startpri=${this.screenOut.min}&endpri=${this.screenOut.max}`)//${sortMap[this.screenOut.type]}
 		.then((data)=>{
 			let body=JSON.parse(data.bodyText)
-			console.log(body)
+			console.log('又搜索了 他呀的')
 			if( body.result ){
 				let productLists=body.data.DataList;
 				let len=productLists.length;
@@ -172,13 +176,20 @@ export default {
 					}
 					this.pageIndex++;
 					this.stopLoad=false;
-					//console.log(this.pageIndex);
+					//this.noProduct=false//表示没搜索到商品
 				}else{
 					this.noMore=true;//表示没有更多商品了
+					if(this.productLists<1){
+						this.noProduct=true//表示没搜索到商品
+					}
+					
 				}
 			}else{//没有更多商品了
 				this.stopLoad=true;//阻止继续加载
 				this.noMore=true;//表示没有更多商品了
+				if(this.productLists<1){
+					this.noProduct=true//表示没搜索到商品
+				}
 			}
 		},(err)=>{
 			console.log(err);
@@ -187,7 +198,8 @@ export default {
       initPage(){//初始化页面的页码和是否可加载
         this.pageIndex=1;
 	    this.stopLoad=false;//用来判断现在是否可以加载,true表示停止加载
-        this.noMore=false;//true表示没有更多商品了
+		this.noMore=false;//true表示没有更多商品了
+		this.noProduct=false,//true表示没搜索到任何商品，这将会显示缺省页面
 		this.productLists.splice(0,this.productLists.length)//产品lists
       },
       initType(){//初始化排序
@@ -196,8 +208,11 @@ export default {
           this.screenOut.max='';
       },
       commonSearch(){//给排序和筛选用的
-          this.$emit('sort-search');
-          this.initPage();
+		  this.$emit('sort-search');
+		  if(this.noProduct){
+			  return;
+		  }
+		  this.initPage();
           this.loadMore(this.keyWord);
       },
       initPriRegion(){//重新排序的时候需要重置筛选
@@ -211,7 +226,7 @@ export default {
   watch: {
     keyWord(){
         this.initType();
-        this.initPage();
+		this.initPage();
         this.loadMore(this.keyWord);
     }
   },
@@ -226,10 +241,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .result_page{
-    width: 100%;
-    height: 100%;
-    width: 100vw;
-    height: 100vw;
     position: relative;
     z-index:1;
 }
@@ -323,6 +334,7 @@ export default {
 	top:0;
 	left: 0;
 	background-color: rgba(0,0,0,.6);
+	z-index: 50;
 }
 /*z-index为60的排序面板*/
 .sort_box{
@@ -368,6 +380,7 @@ export default {
 	left: 0;
 	background-color: #fff;
 	padding:10px;
+	z-index: 60;
 }
 .sieve_box h3{
 	font-size: 14px;

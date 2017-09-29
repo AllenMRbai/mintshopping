@@ -82,14 +82,7 @@ export default {
 }
 
 .search_page{
-    width: 100%;
-    width: 100vw;
-    height: 100vh;
-    background-color: #fff;
     position: relative;
-    overflow-x: hidden;
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
 }
 
 /*商城白色的头部*/

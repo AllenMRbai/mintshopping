@@ -58,7 +58,7 @@
 		<div class="special_subject"><img src="../assets/special_subjuct.jpg"></div><!-- banner2 -->
 		
 		<!-- 可加载的卡片式产品列表 -->
-		<infinite-scroll-product-card :cards='productCards' :loading='stopLoad' :no-more='noMore' @load-more='loadMore'></infinite-scroll-product-card>
+		<infinite-scroll-product-card :cards='productCards' :loading='stopLoad' :no-more='noMore' :no-product='noProduct'  @load-more='loadMore'></infinite-scroll-product-card>
 
 		<div class="bottom_blank_space" style="height: 50px;"></div><!-- 底部空白 -->
 	</main>
@@ -92,19 +92,24 @@ export default {
           {title:'人气推荐',title2:'这里有最火爆的商品',lineRight:false,lineBottom:false},
 	  ],
 	  pageIndex:1,
+
+	  //以下为无限滚动盒子的参数
 	  stopLoad:false,//用来判断现在是否可以加载,true表示停止加载
 	  noMore:false,//true表示没有更多商品了
+	  noProduct:false,//true表示没搜索到任何商品，这将会显示缺省页面
 	  productCards:[]
     }
   },
   methods:{
 	loadMore(){
+		//console.log('开始加载')
 		if(this.noMore){
 			return;
 		}
 		if(this.stopLoad){
 			return;
 		}
+		//console.log('通过是撒飞华健康')
 		this.stopLoad=true;
 		this.$http.get(`http://api.lingkuaiyou.com/Goods/GetHomeGoods?pageIndex=${this.pageIndex}`)
 		.then((data)=>{
@@ -112,6 +117,7 @@ export default {
 			//console.log('这里没有缓存')
 			//console.log(body.result);
 			//console.log('这是本次传过来的商品个数'+body.data.DataList.length)
+			console.log('我正他妈无语了')
 			if( body.result ){
 				let productLists=body.data.DataList;
 				let len=productLists.length;
@@ -121,13 +127,20 @@ export default {
 					}
 					this.pageIndex++;
 					this.stopLoad=false;
+					console.log('安静地方');
 					console.log(this.pageIndex);
 				}else{
 					this.noMore=true;//表示没有更多商品了
+					if(this.productLists<1){
+						this.noProduct=true//表示没搜索到商品
+					}
 				}
 			}else{//没有更多商品了
 				this.stopLoad=true;//阻止继续加载
 				this.noMore=true;//表示没有更多商品了
+				if(this.productLists<1){
+					this.noProduct=true//表示没搜索到商品
+				}
 			}
 		},(err)=>{
 			console.log(err);
@@ -138,7 +151,7 @@ export default {
 	  this.loadMore();
 	  	 
   },
-  mounted(){
+  /*mounted(){
 	  this.$nextTick(function () {
 			console.log('<-- 页面打开')
 	  console.log('pageIndex='+this.pageIndex)
@@ -147,7 +160,7 @@ export default {
 		})
 	  
 	  
-  }
+  }*/
 //   deactivated(){
 // 	  console.log('没有被缓存')
 //   },

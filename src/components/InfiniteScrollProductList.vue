@@ -3,8 +3,8 @@
         <!-- 加载内容盒子 -->
         <div 
             class="load_content_box" 
-            v-if="haveProducts" 
             v-infinite-scroll="loadMore" 
+            v-show='!noProduct'
             :infinite-scroll-disabled="loading" 
             infinite-scroll-distance="100">
 
@@ -21,10 +21,11 @@
             
         </div>
         <!-- 缺省页面 -->
-        <div class="default_page" v-else>
-            <h2>没找到任何商品！</h2>
+        <div  v-show='noProduct'>
+            <div class="default_pic"><img src="../assets/default_nogoods.png"></div>
+		    <div class="default_title">没找到你搜索的商品</div>
         </div>
-		<div class="load_tips">
+		<div class="load_tips" v-show='!noProduct'>
             <div v-if='!noMore'>正在加载中...</div>
             <div v-else>没有更多商品了</div>
         </div>
@@ -42,9 +43,14 @@ export default {
           type:Boolean,
           default:false//若为真，则无限滚动不会被触发 默认为false
       },
-      'noMore':{
+      'noMore':{//没有更多商品 true表示没有更多商品了， false表示还可以加载
           type:Boolean
+      },
+      'noProduct':{//没有商品  true表示一个商品也没有，false表示有商品 或还在请求中，默认为false
+          type:Boolean,
+          default:false
       }
+      
   },
 
   data(){
@@ -66,8 +72,22 @@ export default {
 </script>
 
 <style scoped>
+/* 缺省页面 */
+.default_pic{
+	width: 70%;
+	margin:0 auto;
+	margin-top:4vh;
+	opacity: .7;
+}
+.default_title{
+	text-align: center;
+	color: #c0c1c2;
+	font-size: 16px;
+}
 /*列表式产品*/
-.load_content_box{}
+.load_content_box{
+    background-color: #fff;
+}
 .load_content_box .product_list{
 	align-items: flex-start;
 	flex: 1;
@@ -132,7 +152,8 @@ export default {
     background-color: #fff;
     height: 30px;
     text-align: center;
-    font-size: 15ox;
+    font-size: 14px;
+    color: #999999;
     line-height: 30px;
 }
 /* 缺省页面 */

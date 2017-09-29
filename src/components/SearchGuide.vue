@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="white_box">
     <div style="height:46px;"></div>
     <div class="btn_pannel">
 		<div class="pannel_top flex_betwen">
@@ -27,7 +27,7 @@
 <script>
 
 export default {
-  name:'Guide',
+  name:'SearchGuide',
   data () {
     return {
 		historys:['机械硬盘','固态硬盘','CPU','巧克力'],
@@ -74,6 +74,12 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.white_box{
+	width: 100%;
+	width: 100vw;
+	height: 100vh;
+	background-color: #fff;
+}
 /*预视界面*/
 .btn_pannel{
 	padding: 8px 10px;

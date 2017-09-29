@@ -80,6 +80,7 @@ export default {
 				}
 			},
 			detail:'',//详细地址
+			addressID:false,//如果是修改地址需要该ID,如果为false表示添加地址
 
 			//以下内容不提交，用来与省市区绑定的
 			pannel:{
@@ -101,6 +102,9 @@ export default {
 	computed:{
 		getPCA(){
 			return (this.location.province.name+" "+this.location.city.name+" "+this.location.area.name).trim();
+		},
+		noSpacePCA(){
+			return (this.location.province.name+this.location.city.name+this.location.area.name).trim();
 		}
 	},
 	watch:{
@@ -115,7 +119,28 @@ export default {
   methods:{
 		//判断这是添加地址还是修改地址
 		addOrChange(){
-      
+			let pars=this.$route.params;
+			if(pars.id==='add'){//该页面为添加地址
+				return;
+			}
+			this.name=decodeURIComponent(pars.name);
+			this.phone=pars.mobile;
+
+			this.location.province.name=pars.provinceN
+			this.location.province.id=pars.province
+			this.location.city.name=pars.cityN
+			this.location.city.id=pars.city
+			this.location.area.name=pars.areaN
+			this.location.area.id=pars.area
+
+			this.pannel.province.name=pars.provinceN
+			this.pannel.province.id=pars.province
+			this.pannel.city.name=pars.cityN
+			this.pannel.city.id=pars.city
+			this.pannel.area.name=pars.areaN
+			this.pannel.area.id=pars.area
+			
+			this.detail=pars.address.replace(this.noSpacePCA,'')
       
 		},
 		//显示 省市区面板
@@ -143,6 +168,11 @@ export default {
 			
 		},
 		getProvincesList(){
+			// let provinceid=id || false;
+			// let url=`http://api.lingkuaiyou.com/User/GetProvincesList`
+			// if(provinceid){
+			// 	url+=`?id=${provinceid}`
+			// }
 			this.$http.get(`http://api.lingkuaiyou.com/User/GetProvincesList`).then(function(data){
 				//console.log(data.body)
 				if(data.body.result){//成功获取个人信息，这表明该用户登录成功
@@ -278,7 +308,8 @@ export default {
 			return true;
 		},
 		submitTable(){
-			if(!this.submitValidate){//验证没通过 return
+
+			if(!this.submitValidate()){//验证没通过 return
 				return;
 			}
 			let token=this.getToken()
@@ -288,8 +319,9 @@ export default {
 				return;
 			}
 
+			let combineAddress=this.noSpacePCA+this.detail;
 			let changeParam=this.$route.params.id;
-			let goUrl=`http://api.lingkuaiyou.com/User/EditUserAddress?token=${token}&provinceid=${this.location.province.id}&cityid=${this.location.city.id}&areaid=${this.location.area.id}&name=${this.name}&mobile=${this.phone}&details=${this.detail}`;
+			let goUrl=`http://api.lingkuaiyou.com/User/EditUserAddress?token=${token}&provinceid=${this.location.province.id}&cityid=${this.location.city.id}&areaid=${this.location.area.id}&name=${this.name}&mobile=${this.phone}&details=${combineAddress}`;
 			//console.log('接受到的id为'+changeParam)
 			if(changeParam!=='add'){//如果本页$route的参数id不为add即表示修改地址，应在请求的地址后面加上参数id
 				goUrl+=`&id=${changeParam}`

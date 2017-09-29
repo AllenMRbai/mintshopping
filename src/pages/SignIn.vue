@@ -39,6 +39,8 @@ export default {
       this.password=text;
     },
     login:function(){
+      console.log('看这里')
+      console.log(this.$route)
       if(this.frontValidate()){
         Indicator.open();
         
@@ -52,7 +54,11 @@ export default {
             //MessageBox('提示', '登录成功！');
             //console.log(body.data);
             localStorage.setItem("token",body.data);
-            this.$router.replace('/me');
+            let redirect=this.$route.query.redirect;
+            if(!redirect){
+               this.$router.replace('/me');
+            }
+               this.$router.replace(redirect);
           }else{
             MessageBox('提示', body.message);
           }

@@ -206,13 +206,14 @@ let router= new Router({
     },
     //结算页面
     {
-      path:'/settlement',
+      path:'/settlement/:productId/:options',
       name:'Settlement',
-      component:Settlement
+      component:Settlement,
+      meta: { requiresAuth: true }
     },
     //支付页面
     {
-      path:'/payment',
+      path:'/payment/:orderId/:price',
       name:'Payment',
       component:Payment
     },
@@ -225,6 +226,12 @@ let router= new Router({
           path:'',
           name:'ManageAddress',//地址管理
           component:ManageAddress,
+          meta: { requiresAuth: true }
+        },
+        {
+          path:'addAddress/:id/:name/:mobile/:address/:province/:city/:area/:provinceN/:cityN/:areaN',
+          name:'AddAddress',//添加地址
+          component:AddAddress,
           meta: { requiresAuth: true }
         },
         {

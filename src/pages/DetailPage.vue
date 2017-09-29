@@ -23,15 +23,15 @@
         </div>
     </div>
 
-	<div class="sub_page" v-if="nowPage==0"><!-- 商品详情page -->
+	<div class="sub_page" v-show="nowPage==0"><!-- 商品详情page -->
 		<div class="detail_pic_box">
 			<img v-for="(pic,index) in proDetPics" :key="index" v-lazy="pic">
 		</div>
 	</div>
-	<div class="sub_page" v-else-if="nowPage==1"><!-- 购物须知page -->
+	<div class="sub_page" v-show="nowPage==1"><!-- 购物须知page -->
 		
 	</div>
-	<div class="sub_page" v-else><!-- 相似商品卡片 -->
+	<div class="sub_page" v-show="nowPage==2"><!-- 相似商品卡片 -->
 		<product-card :cards='similarProduct'></product-card>
 	</div>
 
@@ -66,32 +66,22 @@
         <div class="close" @click="closePurchasePanel"><img src="../assets/common_close_stroke_grey.png"></div>
         <div class="top flex_betwen">
             <div class="pic_box">
-                <div class="frame"><img src="../assets/product.jpeg"></div>
+                <div class="frame"><img :src="productDetail.Pic"></div>
             </div>
             <div class="detail">
                 <h3>￥<span>126</span></h3>
-                <div class="choice"><span>已选：</span><span>"绿色"</span> <span>"M"</span></div>
+                <div class="choice"><span>已选：</span>{{ optsString }}</div>
             </div>
         </div>
         <div class="middle">
-            <div class="cell line_bottom">
-                <div class="type_title">颜色</div>
+            <div class="cell" :class="{'line_bottom':index!==(options.length-1)}" v-for="(opt,index) in options" :key="index">
+                <div class="type_title">{{ opt.Name }}</div>
                 <ul class="types_box flex_start">
-                    <li class="active">绿色</li>
-                    <li>黄色</li>
-                    <li>灰色</li>
-                </ul>
-            </div>
-            <div class="cell">
-                <div class="type_title">尺码</div>
-                <ul class="types_box flex_start">
-                    <li class="active">M</li>
-                    <li>XL</li>
-                    <li>XXL</li>
+                    <li v-for="(data,index) in opt.Data" :key="index" :class="{'active':index===opt.selectedIndex}" @click="doSelection(index,opt)">{{ data }}</li>
                 </ul>
             </div>
         </div>
-        <router-link tag="div" to="/settlement" class="bottom">确定</router-link>
+        <div class="bottom" @click="ensureBuy">确定</div>
     </div>
    
 
@@ -122,12 +112,14 @@ export default {
 		showToToP:false,
 		proDetPics:[],//ajax请求的商品图片
 		productRecomend:[],//ajax请求的商品推荐
-		similarProduct:[]
+		similarProduct:[],//相似商品
+		options:[],//商品选项
+		optsString:''
     }
       
   },
   computed:{
-	  param(){
+	  param(){//产品id
 		  return this.$route.params.productId;
 	  }
   },
@@ -147,6 +139,24 @@ export default {
 		  .then((data)=>{
 			  let body=JSON.parse(data.bodyText);
 			  this.productDetail=body.data;
+			  console.log('啊啊啊')
+
+			  console.log(this.productDetail)
+			  //获得并处理购买选项
+			  this.options.splice(0,this.options.length);//同页跳转会复用对象，因此需要清空
+			  //this.selected.splice(0,this.options.length);//清空已选择的选项
+			  let opts=JSON.parse(this.productDetail.Options);
+			  let optsL=opts.length;
+
+			  for(let i=0;i<optsL;i++){
+				  opts[i].selectedIndex=0;
+				  this.options.push(opts[i]);
+			  }
+			  this.selectedString();
+			  //console.log(this.options)
+			  
+
+			  //获得并处理商品详情图片
 			  let str=body.data.TaoBao_details;
 			  let reg=/src="([^"\r\n]*)"/g;
 			  let result;
@@ -160,7 +170,7 @@ export default {
 			  console.log(err);
 		  })
 	  },
-	  getProductRecomend(){
+	  getProductRecomend(){//获得推荐商品
 		  this.$http.get(`http://api.lingkuaiyou.com/Goods/GetGoodsList?pageSize=4`)
 		  .then((data)=>{
 			  let body=JSON.parse(data.bodyText);
@@ -172,7 +182,7 @@ export default {
 			  console.log(err);
 		  })
 	  },
-	  getSimilarProduct(){
+	  getSimilarProduct(){//获得相似商品
 		  this.$http.get(`http://api.lingkuaiyou.com/Goods/GetGuessYouLike?id=${this.$route.params.productId}`)
 		  .then((data)=>{
 			  let body=JSON.parse(data.bodyText);
@@ -186,6 +196,36 @@ export default {
 	  },
 	  goToTop(){
 		  document.body.scrollTop=0;
+	  },
+	  doSelection(ind,opt){//选择选项商品选项
+		opt.selectedIndex=ind;
+		this.selectedString();
+	  },
+	  selectedString(){//产品选项字符串
+		let len=this.options.length;
+		let tem='';
+		for(let i=0;i<len;i++){
+			let opt=this.options[i];
+			tem+=opt.Data[opt.selectedIndex]+'，'
+		}
+		tem=tem.slice(0,-1);
+		this.optsString=tem;
+	  },
+	  selectedStringKey(){//带键值的产品选项字符串
+		let len=this.options.length;
+		let tem='';
+		for(let i=0;i<len;i++){
+			let opt=this.options[i];
+			tem+=opt.Name+'：'+opt.Data[opt.selectedIndex]+'，'
+		}
+		tem=tem.slice(0,-1);
+		return tem;
+	  },
+	  ensureBuy(){
+		let optString=encodeURIComponent(this.selectedStringKey());
+		  this.$router.push({
+			  path:`/settlement/${this.productId}/${optString}`
+		  })
 	  }
   },
   watch: {
@@ -200,7 +240,7 @@ export default {
   created(){
      //获得当前路由的name
 	 this.productId=this.$route.params.productId;
-	 this.getGoodsInfo();//获得商品详情数据
+	 this.getGoodsInfo();//获得商品详情数据 和选项列表
 	 this.getProductRecomend();//获得商品推荐数据
 	 this.getSimilarProduct();//获得相似商品
 	 document.body.onscroll=()=>{
@@ -405,10 +445,10 @@ image[lazy=loading] {
 .purchase_pannel .close{
 	width: 40px;
 	height: 40px;
-	padding: 5px;
+	padding: 6px;
 	position: absolute;
-	right: 2px;
-	top: 2px;
+	right: 0;
+	top: 0;
 }
 .purchase_pannel .top{
 	width: 100vw;
@@ -448,7 +488,7 @@ image[lazy=loading] {
 	margin-bottom:2px;
 	padding:0 2vw;
 	width: 100vw;
-	height: 64vw;
+	height: 76vw;
 	overflow-x: hidden;
 	overflow-y:scroll;
 	-webkit-overflow-scrolling:touch;
@@ -460,7 +500,7 @@ image[lazy=loading] {
 .purchase_pannel .middle .type_title{
 	color: #333333;
 	font-size: 16px;
-	margin-bottom: 8px;
+	margin-bottom: 14px;
 }
 .purchase_pannel .middle .types_box{
 	flex-wrap: wrap;
@@ -474,7 +514,7 @@ image[lazy=loading] {
 	background-color:#f5f5f5; 
 	min-width: 50px;
 	text-align: center;
-	margin-bottom: 14px;
+	margin-bottom: 18px;
 }
 .purchase_pannel .middle .types_box li.active{
 	background-color: #fa0729;

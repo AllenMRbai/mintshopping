@@ -3,47 +3,48 @@
     <div class="list_box">
 		<div class="list flex_betwen dashed_bottom">
 			<div class="black">订单编号</div>
-			<div class="black">YJ10607101504068870937</div>
+			<div class="black order_id">{{ this.$route.params.orderId }}</div>
 		</div>
 		<div class="list flex_betwen">
 			<div class="grey">应付金额</div>
-			<div class="red">￥<span>126.00</span></div>
+			<div class="red">￥<span>{{ this.$route.params.price }}</span></div>
 		</div>
 	</div>
 	
 	<div class="pay_title line_bottom">请选择支付方式</div>
 	<div class="radio_list_box">
-		<label class="list flex_betwen line_bottom">
+		<label class="list flex_betwen line_bottom" v-if="payWay==='wechat'">
 			<div class="icon"><img src="../assets/wechat.jpg"></div>
 			<div class="my_radio active">
-				<input type="radio" value='0' name="pay-method" checked="true" style="display: none;">
+				<input type="radio" value='0' name="pay-method"  style="display: none;">
 				<img src="../assets/common_hook_white.png">
 			</div>
 		</label>
-		<label class="list flex_betwen">
+		<label class="list flex_betwen" v-if="payWay==='alipay'">
 			<div class="icon"><img src="../assets/alipay.jpg"></div>
-			<div class="my_radio">
-				<input type="radio" value='0' name="pay-method" style="display: none;">
+			<div class="my_radio active">
+				<input type="radio" value='0' name="pay-method"  style="display: none;">
 				<img src="../assets/common_hook_white.png">
 			</div>
 		</label>
 	</div>
 	
-	<mt-button type="primary" size="large" style="background-color:#ee2532;width: 90%;margin:0 auto;">立即支付</mt-button>
+	<mt-button type="primary" size="large" style="background-color:#ee2532;width: 90%;margin:0 auto;" @click="payIt">立即支付</mt-button>
 </div>
     
 </template>
 
 <script>
+import { MessageBox,Indicator } from 'mint-ui';
 
 export default {
   name:'Payment',
   components:{
-	  
+	  price:0
   },
   data () {
     return {
-        
+        payWay:''
     }
       
   },
@@ -51,12 +52,27 @@ export default {
 	  
   },
   methods:{
-	  
+	  showWich(){
+		    var ua = navigator.userAgent.toLowerCase();
+			if(ua.match(/MicroMessenger/i)=="micromessenger") {//如果是微信网页，显示微信支付
+				return 'wechat';
+			} else {//如果不是微信网页，显示支付宝
+				return 'alipay';
+			}
+	  },
+	  payIt(){
+		  let now=this.payWay;
+		  if(now==='wechat'){
+			  MessageBox('提示', '这是微信支付');
+		  }else if(now==='alipay'){
+			  MessageBox('提示', '这是支付包支付');
+		  }else{
+			  MessageBox('提示', '支付页面出错，请稍等一会再点击支付');
+		  }
+	  }
   },
   created(){
-     //获得当前路由的name
-     var asd=this.$route;
-     console.log(asd)
+	  this.payWay=this.showWich();
   }
 }
 </script>
@@ -85,11 +101,14 @@ export default {
 	font-weight: bold;
 }
 .list_box .black{
-	font-weight: bold;
+	font-weight: normal;
 	color: #333333;
-	font-size: 16px;
+	font-size: 14px;
 }
-
+.list_box .order_id{
+	max-width: 180px;
+	word-wrap: break-word;
+}
 /*选择支付方式*/
 .pay_title {
 	background-color: #fff;
