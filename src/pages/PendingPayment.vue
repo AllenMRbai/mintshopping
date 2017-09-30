@@ -3,23 +3,28 @@
 <div class="cards_pannel">
     <div class="blacnk_space" style="height: 46px;"></div>
 
-    <div class="card">
-        <div class="pro_detail_pannel">
-            <div class="flex_box flex_betwen">
-                <div class="pic"><img src="../../static/img/product.jpeg"></div>
-                <div class="right_box">
-                    <div class="pro_name">爱空间的恢复健康爱的经费和爱空间的划分按揭客户爱神的箭好发见大家肯定</div>
-                    <div class="zhu_currency">可获得<span>126</span>猪币</div>
-                    <div class="choice">颜色：绿色，尺寸：L</div>
-                </div>
-            </div>
-        </div>
-        <div class="line_top flex_end bottom">
-            <div class="tips">剩余 <span>20</span>分 <span>50</span>秒</div>
-            <div class="btn fill_red">去付款</div>
-        </div>
-        <div class="status">待付款</div>
-    </div>
+	<div class="cards_box">
+		
+		<div class="card" v-for="(card,index) in orders" :key="card.ID">
+			<div class="pro_detail_pannel">
+				<div class="flex_box flex_betwen">
+					<div class="pic"><img :src="card.GoodsPic"></div>
+					<div class="right_box">
+						<div class="pro_name">{{ card.GoodsName }}</div>
+						<div class="zhu_currency">可获得<span>{{ card.GoodsPrice }}</span>猪币</div>
+						<div class="choice">{{ card.GoodsOption }}</div>
+					</div>
+				</div>
+			</div>
+			<div class="line_top flex_end bottom">
+				<div class="tips">剩余 <span>20</span>分 <span>50</span>秒</div>
+				<div class="btn fill_red">去付款</div>
+			</div>
+			<div class="status">待付款</div>
+		</div>
+
+	</div>
+    
 
 </div>
     
@@ -31,14 +36,48 @@ export default {
   name: 'PendingPayment',
   data () {
     return {
-     
+		orders:[]
     }
   },
   methods:{
-
+		getToken(){//获得本地的token
+			let token=localStorage.getItem('token');
+			if(token===null || token===''){
+				return false;
+			}
+			return encodeURIComponent(token);
+		},
+		goSignIn(){//跳转到登录页面
+			this.$router.push({
+				path:'/sign/signIn',
+				query: { redirect: this.$route.fullPath }
+			});//'/sign/signIn'
+		},
+		getOrders(){//获取订单
+			let token=this.getToken();
+			if(!token){//如果没有token就直接跳到登录页面
+				this.goSignIn();
+				return;
+			}
+			console.log('咯v啊大家好')
+				
+			this.$http.get(`http://api.lingkuaiyou.com/Order/GetOrderList?token=${token}&status=0`).then(function(data){
+				console.log(data.body)
+				if(data.body.result){//表示订单生成成功
+					let lists=data.body.data.DataList;
+					let len=lists.length;
+					for(let i=0;i<len;i++){
+						this.orders.push(lists[i])
+					}
+				}else{
+					MessageBox('提示', data.body.message);
+				}
+			}).catch(err=>{})
+			
+		}
   },
-  computed:{
-
+  created(){
+	  this.getOrders()
   }
 }
 </script>

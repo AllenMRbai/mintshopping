@@ -44,7 +44,7 @@ import Logistics from '@/pages/Logistics'
 //个人中心其他
 import TheOther from '@/pages/TheOther'
 import Help from '@/pages/Help'
-
+import QRcode from '@/pages/QRcode'
 
 Vue.use(Router)
 
@@ -102,22 +102,26 @@ let router= new Router({
         {
           path:'allOrders',
           name:'AllOrders',//所有订单
-          component:AllOrders
+          component:AllOrders,
+          meta: { requiresAuth: true }
         },
         {
           path:'pendingPayment',
           name:'PendingPayment',//待付款
-          component:PendingPayment
+          component:PendingPayment,
+          meta: { requiresAuth: true }
         },
         {
           path:'pendingShipment',
           name:'PendingShipment',//待发货
-          component:PendingShipment
+          component:PendingShipment,
+          meta: { requiresAuth: true }
         },
         {
           path:'shipped',
           name:'Shipped',//已发货
-          component:Shipped
+          component:Shipped,
+          meta: { requiresAuth: true }
         },
       ]
     },
@@ -129,32 +133,38 @@ let router= new Router({
         {
           path:'successTrade',
           name:'SuccessTrade',//交易成功
-          component:SuccessTrade
+          component:SuccessTrade,
+          meta: { requiresAuth: true }
         },
         {
           path:'waitingForPayment',
           name:'WaitingForPayment',//待支付
-          component:WaitingForPayment
+          component:WaitingForPayment,
+          meta: { requiresAuth: true }
         },
         {
           path:'waitingForShipment',
           name:'WaitingForShipment',//待发货
-          component:WaitingForShipment
+          component:WaitingForShipment,
+          meta: { requiresAuth: true }
         },
         {
           path:'hasShipped',
           name:'HasShipped',//已发货
-          component:HasShipped
+          component:HasShipped,
+          meta: { requiresAuth: true }
         },
         {
           path:'successPurchase',
           name:'SuccessPurchase',//确认收货时的详情页
-          component:SuccessPurchase
+          component:SuccessPurchase,
+          meta: { requiresAuth: true }
         },
         {
           path:'successPayment',
           name:'SuccessPayment',//购买商品支付成功时的详情页
-          component:SuccessPayment
+          component:SuccessPayment,
+          meta: { requiresAuth: true }
         }
       ]
 
@@ -257,6 +267,11 @@ let router= new Router({
           path:'help',
           name:'Help',//帮助页面
           component:Help
+        },
+        {
+          path:'QRcode',
+          name:'QRcode',//关注二维码
+          component:QRcode
         }
       ]
     }

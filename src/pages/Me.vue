@@ -41,7 +41,7 @@
 		<router-link tag="div" :to="opt.link" class="lists_box" v-for="(opt,index) in options" :key="index">
 			<div class="list flex_betwen">
 				<div class="icon"><img :src="opt.icon"></div>
-				<div class="right flex_betwen line_bottom">
+				<div class="right flex_betwen" :class="{'line_bottom':index!==(options.length-1)}">
 					<div class="title">{{ opt.title }}</div>
 					<div class="arrow"><img src="../assets/common_rightarrow_black.png"></div>
 				</div>
@@ -74,11 +74,10 @@ export default {
       ],
       options:[
         {title:'收货地址管理',icon:require('../assets/me_icons_5.jpg'),link:'/address'},
-        {title:'关注公众号',icon:require('../assets/me_icons_4.jpg'),link:'/theOther/help'},
+        {title:'关注公众号',icon:require('../assets/me_icons_4.jpg'),link:'/theOther/QRcode'},
         {title:'密码修改',icon:require('../assets/me_icons_3.jpg'),link:'/sign/alter1'},
         {title:'用户反馈',icon:require('../assets/me_icons_2.jpg'),link:'/sign/alter1'},
         {title:'帮助',icon:require('../assets/me_icons_1.jpg'),link:'/theOther/help'},
-        {title:'客服',icon:require('../assets/me_icons_0.jpg'),link:'/sign/alter1'}
       ]
     }
   },

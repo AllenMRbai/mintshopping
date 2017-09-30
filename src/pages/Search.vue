@@ -2,7 +2,7 @@
 <div class="search_page">
     <header class="line_bottom">
 		<div class="search_bar_box white_bar_box flex_center ">
-			<div class="follow_btn">关注</div>
+			<div class="follow_btn" @click="followUs">关注</div>
             <label class="search_bar">
                 <input type="text" placeholder="输入你想搜索的东西" id="search_input">
             </label>
@@ -12,6 +12,15 @@
 
     <search-guide v-if="nowPage===0" @go-to='goTo'></search-guide>
     <search-reasult :key-word='keyWord' @sort-search='changeKey' v-else></search-reasult>
+
+    <mt-popup
+	v-model="popupVisible"
+	position="center">
+		<div class="qrcode_box">
+			<div class="qrcode"><img src="../assets/commen_qrcode.jpg"></div>
+			<p>长按二维码，扫码即可关注我们</p>
+		</div>
+	</mt-popup>
 </div>
     
 
@@ -31,6 +40,7 @@ export default {
     return {
         nowPage:0,
         keyWord:'',
+        popupVisible:false
     }
   },
   methods:{
@@ -63,6 +73,9 @@ export default {
       },
       changeKey(){
           document.getElementById('search_input').value=this.keyWord;
+      },
+      followUs(){
+        this.popupVisible=true;
       }
   },
   mounted(){
@@ -74,11 +87,31 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+/* 页面切换效果 */
 .fade-enter-active, .fade-leave-active {
   transition: opacity .2s
 }
 .fade-enter, .fade-leave-to{
   opacity: 0
+}
+/* 关注二维码 */
+.qrcode_box{
+	width: 60%;
+	width: 60vw;
+	padding:20px 10px;
+	background-color: #fff;
+	border-radius: 8px;
+}
+.qrcode_box .qrcode{
+	width: 50vw;
+	height: 50vw;
+	margin:0 auto;
+	margin-bottom: 10px;
+}
+.qrcode_box p{
+	text-align: center;
+	font-size: 14px;
+	color: #666666;
 }
 
 .search_page{

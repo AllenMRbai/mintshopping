@@ -2,7 +2,7 @@
 <div class="page_content">
   <header class="line_bottom">
 		<div class="search_bar_box white_bar_box flex_center ">
-			<div class="follow_btn">关注</div>
+			<div class="follow_btn" @click="followUs">关注</div>
 			<router-link class="search_bar" tag="div" to="/search">输入你想要搜索的东西</router-link>
 			<router-link class="search_btn" tag="div" to="/search"><img src="../assets/common_search_black.png"></router-link>
 		</div>
@@ -33,6 +33,15 @@
 		</div>
 	</div>
 
+  <mt-popup
+	v-model="popupVisible"
+	position="center">
+		<div class="qrcode_box">
+			<div class="qrcode"><img src="../assets/commen_qrcode.jpg"></div>
+			<p>长按二维码，扫码即可关注我们</p>
+		</div>
+	</mt-popup>
+  
 </div>
     
 </template>
@@ -96,13 +105,17 @@ export default {
           ]
         }
 
-      ]
+      ],
+      popupVisible:false
 
     }
   },
   methods:{
     changeCategoryPage(ind){
       this.nowAt=ind;
+    },
+    followUs(){
+      this.popupVisible=true;
     }
   },
   created:function(){
@@ -114,6 +127,28 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+/* 关注二维码 */
+.qrcode_box{
+	width: 60%;
+	width: 60vw;
+	padding:20px 10px;
+	background-color: #fff;
+	border-radius: 8px;
+}
+.qrcode_box .qrcode{
+	width: 50vw;
+	height: 50vw;
+	margin:0 auto;
+	margin-bottom: 10px;
+}
+.qrcode_box p{
+	text-align: center;
+	font-size: 14px;
+	color: #666666;
+}
+
+
+
 .page_content{
   background-color: #fff;
   width:100%;
