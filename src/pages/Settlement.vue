@@ -78,7 +78,8 @@ export default {
 			freight:0.00,
 			price:0.00,
 			options:''
-		}
+		},
+		productID:''
 		
     }
       
@@ -130,23 +131,13 @@ export default {
 		})
 	 },
 	 getProduct(){
-		  this.$http.get(`http://api.lingkuaiyou.com/Goods/GetGoodsInfo?id=${this.$route.params.productId}`)
-		  .then((data)=>{
-			  let body=data.body;
-			  console.log(body)
-			if(body.result){
-				this.product.pic=body.data.Pic;
-				this.product.title=body.data.Title;
-				this.product.price=body.data.Price;
-				this.product.options=decodeURIComponent(this.$route.params.options);
-			}else{
+		  let paras=JSON.parse(decodeURIComponent(this.$route.params.prodetail));
 
-			}
-			
-		  })
-		  .catch((err)=>{
-			  console.log(err);
-		  })
+		  this.product.pic=paras.Pic;
+		  this.product.title=paras.Title;
+		  this.product.price=paras.Price;
+		  this.product.options=decodeURIComponent(this.$route.params.options);
+		  this.productID=paras.ID
 	 },
 	 getToken(){//获得本地的token
 		let token=localStorage.getItem('token');
@@ -173,15 +164,15 @@ export default {
 		MessageBox.confirm('确定地址填写无误?').then(action=>{
 			
 			Indicator.open();
-			console.log('开始提交订单')
-			console.log(token)
-			console.log(this.$route.params.productId)
-			console.log(this.addressMessage.id)
-			console.log(this.product.options)
+			//console.log('开始提交订单')
+			//console.log(token)
+			//console.log(this.$route.params.productId)
+			//console.log(this.addressMessage.id)
+			//console.log(this.product.options)
 			// console.log(this.addressMessage.id)
 			// console.log(this.$route.params.options)
 			
-			this.$http.get(`http://api.lingkuaiyou.com/Order/PlaceOrder?token=${token}&goodsid=${this.$route.params.productId}&addressid=${this.addressMessage.id}&goodsoption=${encodeURIComponent(this.product.options)}`).then(function(data){
+			this.$http.get(`http://api.lingkuaiyou.com/Order/PlaceOrder?token=${token}&goodsid=${this.productID}&addressid=${this.addressMessage.id}&goodsoption=${encodeURIComponent(this.product.options)}`).then(function(data){
 				Indicator.close();
 				console.log(data.body)
 				if(data.body.result){//表示订单生成成功

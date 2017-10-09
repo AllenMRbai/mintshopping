@@ -8,7 +8,7 @@
         <img src="../assets/orderBanner_0.png">
     </div>
 </div>
-<order-content></order-content>
+<order-content :detail='list'></order-content>
 <div class="operate_bar">
 	<div class="flex_end line_top flex_box">
 		<div class="btn black">查看物流</div>
@@ -29,14 +29,17 @@ export default {
   },
   data () {
     return {
-
+        list:null
     }
   },
   methods:{
-
+    getList(){
+        this.list=JSON.parse(decodeURIComponent(this.$route.params.list));
+    },
   },
-  computed:{
-
+  created(){
+      //获得参数内的list
+      this.getList();
   }
 }
 </script>

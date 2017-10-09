@@ -3,17 +3,19 @@
 <div class="type_bar flex_betwen">
     <ul>
         <li>等待买家付款</li>
-        <li class="tips">剩余 <span>20</span>分钟 <span>50</span>秒</li>
+        <li class="tips" v-if="list.minutes<0">订单已过期</li>
+        <li class="tips" v-else>剩余 {{ list.minutes }}分钟 {{ list.seconds }}秒</li>
     </ul>
     <div class="pic">
         <img src="../assets/orderBanner_2.png">
     </div>
 </div>
-<order-content></order-content>
+<order-content :detail='list'></order-content>
 
 <div class="operate_bar">
 	<div class="flex_end line_top flex_box">
-        <div class="btn red_fill">去付款</div>
+        <div class="btn grey_fill" v-if="list.minutes<0">去付款</div>
+        <div class="btn red_fill" v-else @click="goPay">去付款</div>
 	</div>
 </div>
 
@@ -23,6 +25,7 @@
 
 <script>
 import OrderContent from '@/components/OrderContent'
+import { MessageBox,Indicator } from 'mint-ui';
 
 export default {
   name: 'WaitingForPayment',
@@ -31,14 +34,73 @@ export default {
   },
   data () {
     return {
-
+        list:null,
+        nowTime:0
     }
   },
   methods:{
+      getList(){
+          this.list=JSON.parse(decodeURIComponent(this.$route.params.list));
+      },
+      countDown(list){
+			//console.log(list===this.orders[i])
+			return new Promise((resolve,reject)=>{
+				//let mi=list.minutes;
+				//let se=list.seconds;
+				setTimeout(()=>{
+					//console.log(list.minutes)
+					if(list.minutes<0){
+						return;
+					}
+					let countD=setInterval(()=>{
+						//console.log(list.seconds)
+						if(list.seconds===0){
+							list.seconds=59;
+							list.minutes--;
+							if(list.minutes===-1){
+								clearInterval(countD);
+							}
+						}else{
+							list.seconds--;
+						}
+					},1000)
+				},0);
 
+			})
+			
+		},
+		formatDuring(mss,list){//格式化时间为xx分xx秒
+			//console.log(mss)
+			if(mss<=0){
+				list.minutes=-1;
+				list.seconds=-1;
+				return;
+			}
+			var minutes=parseInt(mss/(1000*60));
+			//console.log(minuteds)
+			var seconds=parseInt(mss%(1000*60)/1000);
+			//console.log(secondds)
+			list.minutes=minutes;
+			list.seconds=seconds;	
+        },
+        goPay(){
+           this.$router.push({
+                path:`/payment/${this.list.ID}/${this.list.GoodsPrice+this.list.Freight}`
+            }) 	
+        }
   },
-  computed:{
-
+  created(){
+      //获得参数内的list
+      this.getList();
+      //格式化minutes和seconds
+      this.nowTime=new Date().getTime();
+      let created=new Date(this.list.Created).getTime()+20*60*1000
+      let mss=created-this.nowTime;
+      this.formatDuring(mss,this.list)
+      
+      //开始倒计时
+      this.countDown(this.list)
+      
   }
 }
 </script>
@@ -111,4 +173,10 @@ export default {
     background-color: #f10949;
     border:none;
 }
+.operate_bar .btn.grey_fill{
+    color: #fff;
+    background-color: #cccccc;
+    border:none;
+}
+
 </style>

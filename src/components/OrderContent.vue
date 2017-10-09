@@ -4,12 +4,12 @@
     <!-- 收货地址面板 -->
     <div class="adress_pannel">
         <div class="top flex_betwen">
-            <div class="name">夜猫子</div>
-            <div class="phone">1575782451</div>
+            <div class="name">{{ detail.Name }}</div>
+            <div class="phone">{{ detail.Mobile }}</div>
         </div>
         <div class="bottom flex_betwen">
             <div class="icon_position"><img src="../assets/common_position_grey.png"></div>
-            <div class="adress">浙江省宁波市慈溪市古塘街道北三环东路888号联盛大厦1号门 10楼1018</div>
+            <div class="adress">{{ detail.Details }}</div>
             <div class="icon_go"></div>
         </div>
     </div>
@@ -17,11 +17,11 @@
     <!-- 商品面板 -->
     <div class="pro_detail_pannel">
         <div class="flex_box flex_betwen">
-            <div class="pic"><img src="../assets/product.jpeg"></div>
+            <div class="pic"><img :src="detail.GoodsPic"></div>
             <div class="right_box">
-                <div class="pro_name">爱空间的恢复健康爱的经费和爱空间的划分按揭客户爱神的箭好发见大家肯定</div>
-                <div class="zhu_currency">可获得<span>126</span>猪币</div>
-                <div class="choice">颜色：绿色，尺寸：L</div>
+                <div class="pro_name">{{ detail.GoodsName }}</div>
+                <div class="zhu_currency">可获得<span>{{ detail.GoodsPrice }}</span>猪币</div>
+                <div class="choice">{{ detail.GoodsOption }}</div>
             </div>
         </div>
     </div>
@@ -30,15 +30,15 @@
     <div class="settle_pannel">
         <div class="settle_list flex_betwen line_bottom">
             <div class="title">商品金额</div>
-            <div class="price">￥126.00</div>
+            <div class="price">￥{{ detail.GoodsPrice }}</div>
         </div>
         <div class="settle_list flex_betwen line_bottom">
             <div class="title grey">运费</div>
-            <div class="price grey">+￥0.00</div>
+            <div class="price grey">+￥{{ detail.Freight }}</div>
         </div>
         <div class="settle_list flex_betwen">
             <div class="title">总金额</div>
-            <div class="price red">￥126.00</div>
+            <div class="price red">￥{{ detail.GoodsPrice+detail.Freight }}</div>
         </div>
     </div>
 
@@ -50,16 +50,15 @@
 
 export default {
   name: 'OrderContent',
+  props:{
+    detail:{
+		type:Object
+	}
+  },
   data () {
     return {
 
     }
-  },
-  methods:{
-
-  },
-  computed:{
-
   }
 }
 </script>

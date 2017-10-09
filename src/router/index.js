@@ -131,25 +131,25 @@ let router= new Router({
       component:OrderDetail,
       children:[
         {
-          path:'successTrade',
+          path:'successTrade/:list',
           name:'SuccessTrade',//交易成功
           component:SuccessTrade,
           meta: { requiresAuth: true }
         },
         {
-          path:'waitingForPayment',
+          path:'waitingForPayment/:list',
           name:'WaitingForPayment',//待支付
           component:WaitingForPayment,
           meta: { requiresAuth: true }
         },
         {
-          path:'waitingForShipment',
+          path:'waitingForShipment/:list',
           name:'WaitingForShipment',//待发货
           component:WaitingForShipment,
           meta: { requiresAuth: true }
         },
         {
-          path:'hasShipped',
+          path:'hasShipped/:list',
           name:'HasShipped',//已发货
           component:HasShipped,
           meta: { requiresAuth: true }
@@ -216,7 +216,7 @@ let router= new Router({
     },
     //结算页面
     {
-      path:'/settlement/:productId/:options',
+      path:'/settlement/:prodetail/:options',
       name:'Settlement',
       component:Settlement,
       meta: { requiresAuth: true }

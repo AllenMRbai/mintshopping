@@ -1,42 +1,27 @@
 <template>
 
-<div class="cards_pannel">
-    <div class="blacnk_space" style="height: 46px;"></div>
-
-	<div class="cards_box">
-		
-		<div class="card" v-for="(card,index) in orders" :key="card.ID">
-			<div class="pro_detail_pannel">
-				<div class="flex_box flex_betwen">
-					<div class="pic"><img :src="card.GoodsPic"></div>
-					<div class="right_box">
-						<div class="pro_name">{{ card.GoodsName }}</div>
-						<div class="zhu_currency">可获得<span>{{ card.GoodsPrice }}</span>猪币</div>
-						<div class="choice">{{ card.GoodsOption }}</div>
-					</div>
-				</div>
-			</div>
-			<div class="line_top flex_end bottom">
-				<div class="tips">剩余 <span>20</span>分 <span>50</span>秒</div>
-				<div class="btn fill_red">去付款</div>
-			</div>
-			<div class="status">待付款</div>
-		</div>
-
-	</div>
-    
-
-</div>
+<infinite-scroll-order-list :orders='orders' :loading='stopLoad' :no-more='noMore' :no-product='noProduct' :now-time='nowTime' @load-more='loadMore'></infinite-scroll-order-list>
     
 </template>
 
 <script>
+import InfiniteScrollOrderList from '@/components/InfiniteScrollOrderList';
 
 export default {
   name: 'PendingPayment',
+  components:{
+      InfiniteScrollOrderList
+  },
   data () {
     return {
-		orders:[]
+		pageIndex:1,//表示当前页码
+
+		//以下为无限滚动盒子的参数
+		stopLoad:false,//用来判断现在是否可以加载,true表示停止加载
+		noMore:false,//true表示没有更多商品了
+		noProduct:false,//true表示没搜索到任何商品，这将会显示缺省页面
+		orders:[],//产品lists 
+		nowTime:0//现在的时间
     }
   },
   methods:{
@@ -53,114 +38,124 @@ export default {
 				query: { redirect: this.$route.fullPath }
 			});//'/sign/signIn'
 		},
-		getOrders(){//获取订单
-			let token=this.getToken();
+		loadMore(){
+			if(this.noMore){//没有更多商品的时候，不能发送请求
+				return;
+			}
+			if(this.stopLoad){//停止加载的时候，不能发送请求
+				return;
+			}
+
+			let token=this.getToken();//获取token
 			if(!token){//如果没有token就直接跳到登录页面
 				this.goSignIn();
 				return;
 			}
-			console.log('咯v啊大家好')
-				
-			this.$http.get(`http://api.lingkuaiyou.com/Order/GetOrderList?token=${token}&status=0`).then(function(data){
-				console.log(data.body)
+
+			this.stopLoad=true;//开启停止加载，防止恶性加载
+			this.$http.get(`http://api.lingkuaiyou.com/Order/GetOrderList?token=${token}&pageIndex=${this.pageIndex}&status=0`).then(function(data){
+				//console.log(data)
 				if(data.body.result){//表示订单生成成功
 					let lists=data.body.data.DataList;
+					console.log(lists)
 					let len=lists.length;
-					for(let i=0;i<len;i++){
-						this.orders.push(lists[i])
+
+					if(len>0){	
+						for(let i=0;i<len;i++){
+							let list=lists[i]
+							let created=new Date(list.Created).getTime()+20*60*1000
+							let mss=created-this.nowTime;
+							this.formatDuring(mss,list)//格式化时间
+							this.orders.push(list)
+							let ind=this.orders.length-1
+							this.countDown(this.orders[ind])
+							//console.log(list)
+						}
+						this.pageIndex++;
+						this.stopLoad=false;
+						//this.noProduct=false//表示没搜索到商品
+					}else{
+						this.noMore=true;//表示没有更多商品了
+						if(this.orders<1){
+							this.noProduct=true//表示没搜索到商品
+						}
+						console.log('看下缺省')
+						console.log(this.noProduct)
 					}
-				}else{
-					MessageBox('提示', data.body.message);
+				}else{//没有更多商品了
+					this.stopLoad=true;//阻止继续加载
+					this.noMore=true;//表示没有更多商品了
+					if(this.orders<1){
+						this.noProduct=true//表示没搜索到商品
+					}
 				}
 			}).catch(err=>{})
+		},
+
+		/*
+        **这是一个异步的倒计时函数
+        **返回 promise对象
+        **参数 list 当前列表的model
+        */
+		countDown(list){
+			if(list.minutes<0){
+				return;
+			}
+			return new Promise((resolve,reject)=>{
+				//let mi=list.minutes;
+				//let se=list.seconds;
+				setTimeout(()=>{
+					//console.log(list.minutes)
+					if(list.minutes<0){
+						return;
+					}
+					let countD=setInterval(()=>{
+						//console.log(list.seconds)
+						if(list.seconds===0){
+							list.seconds=59;
+							list.minutes--;
+							if(list.minutes===-1){
+								clearInterval(countD);
+							}
+						}else{
+							list.seconds--;
+						}
+					},1000)
+				},0);
+
+			})
 			
+		},
+
+		/*
+        **格式化时间为xx分xx秒,用来倒计时 
+        **参数 list 当前列表的model
+        **     mss 离订单生成后的20分钟的时间差 单位毫秒 
+        */
+		formatDuring(mss,list){
+			//console.log(mss)
+			if(mss<=0){
+				list.minutes=-1;
+				list.seconds=-1;
+				return;
+			}
+			var minutes=parseInt(mss/(1000*60));
+			//console.log(minuteds)
+			var seconds=parseInt(mss%(1000*60)/1000);
+			//console.log(secondds)
+			list.minutes=minutes;
+			list.seconds=seconds;	
 		}
   },
   created(){
-	  this.getOrders()
+	  this.nowTime=new Date().getTime();
   }
+  
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
-.cards_pannel .card{
-	background-color: #fff;
-	position: relative;
-	margin-bottom: 10px;
-}
-.cards_pannel .card .status{
-	color: #6104fc;
-	font-size: 14px;
-	position: absolute;
-	right: 10px;
-	top:10px;
-}
-.cards_pannel .card .bottom{
-	height: 40px;
-}
-.cards_pannel .card .bottom .btn{
-	color: #666666;
-	border:1px solid #b2b2b2;
-	border-radius: 4px;
-	height: 28px;
-	line-height:28px;
-	text-align: center;
-	font-size: 14px;
-	margin:0 8px;
-	width: 66px;
-}
-.cards_pannel .card .bottom .tips{
-	color: #999999;
-	font-size: 14px;
-	margin:0 8px;
-}
-.cards_pannel .card .bottom .stroke_red{
-	color: #f10949;
-	border:1px solid #f10949;
-}
-.cards_pannel .card .bottom .fill_red{
-	color: #fff;
-	border:none;
-	background-color: #f10949;
-}
-
-/*商品面板*/
-.pro_detail_pannel{
-	background-color: #fff;
-	padding: 10px 8px;
-}
-.pro_detail_pannel .flex_box{
-	flex:1;
-}
-.pro_detail_pannel .pic{
-	width: 28vw;
-	height: 28vw;
-}
-.pro_detail_pannel .right_box{
-	flex:1;
-	height: 28vw;
-	padding: 0 6px;
-	padding-right:60px;
-}
-.pro_detail_pannel .right_box .pro_name{
-	font-size: 14px;
-	line-height: 20px;
-	height: 40px;
-	overflow: hidden;
-	color: #383838;
-}
-.pro_detail_pannel .right_box .zhu_currency{
-	color: #b2b2b2;
-	font-size: 14px;
-}
-.pro_detail_pannel .right_box .zhu_currency span{
-	color: #f9a109;
-}
-.pro_detail_pannel .right_box .choice{
-	color: #999999;
-	font-size: 12px;
-}
 
 </style>

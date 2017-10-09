@@ -138,7 +138,9 @@ export default {
 		  this.$http.get(`http://api.lingkuaiyou.com/Goods/GetGoodsInfo?id=${this.productId}`)
 		  .then((data)=>{
 			  let body=JSON.parse(data.bodyText);
-			  this.productDetail=body.data;
+			  this.productDetail=JSON.parse(data.bodyText).data;
+			  this.productDetail.TaoBao_details='';
+			  console.log(this.productDetail)
 			  console.log('啊啊啊')
 
 			  console.log(this.productDetail)
@@ -223,9 +225,11 @@ export default {
 	  },
 	  ensureBuy(){
 		let optString=encodeURIComponent(this.selectedStringKey());
-		  this.$router.push({
-			  path:`/settlement/${this.productId}/${optString}`
-		  })
+		let prodetail=encodeURIComponent(JSON.stringify(this.productDetail));
+
+		this.$router.push({
+		  path:`/settlement/${prodetail}/${optString}`
+		})
 	  }
   },
   watch: {
@@ -250,6 +254,7 @@ export default {
 			 this.showToToP=false;
 		 }
 	 }
+
   }
      
 
