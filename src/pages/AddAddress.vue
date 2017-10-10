@@ -371,7 +371,8 @@ export default {
 	height: 40px;
 	line-height: 40px;
 	font-size: 14px;
-	text-align: center
+	text-align: center;
+	background-color: #fff;
 }
 .picker_top .grey{
 	width: 60px;

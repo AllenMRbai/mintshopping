@@ -254,7 +254,7 @@ let router= new Router({
     },
     //物流管理
     {
-      path:'/logistics',
+      path:'/logistics/:orderID/:pic',
       name:'Logistics',
       component:Logistics
     },

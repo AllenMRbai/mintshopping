@@ -37,13 +37,14 @@
 
 			<!-- 已发货 -->
 			<div class="line_top flex_end bottom" v-if="card.Status===2">
-				<div class="btn">查看物流</div>
+				<div class="btn" @click="goExpress(card)">查看物流</div>
 				<div class="btn stroke_red">确认收货</div>
 			</div>
 			<div class="status" v-if="card.Status===2">已发货</div>
 
 			<!-- 交易成功 -->
 			<div class="line_top flex_end bottom" v-if="card.Status===3">
+                <div class="btn" @click="goExpress(card)">查看物流</div>
 				<div class="btn">申请售后</div>
 			</div>
 			<div class="status" v-if="card.Status===3">交易成功</div>
@@ -109,7 +110,7 @@ export default {
 		goToDetail(list){
             console.log(list)
             let li=encodeURIComponent(JSON.stringify(list))
-            console.log(li)
+            //console.log(li)
             if(list.Status===0){//待付款
                 this.$router.push({
                     path:`/orderDetail/waitingForPayment/${li}`
@@ -138,6 +139,10 @@ export default {
            this.$router.push({
                 path:`/payment/${list.ID}/${list.GoodsPrice+list.Freight}`
             }) 	
+        },
+        goExpress(list){//    查看物流
+            let pic=encodeURIComponent(list.GoodsPic)
+            this.$router.push(`/logistics/${list.ID}/${pic}`)	
         }
 
   },

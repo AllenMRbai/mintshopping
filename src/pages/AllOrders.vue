@@ -57,15 +57,20 @@ export default {
 				//console.log(data)
 				if(data.body.result){//表示订单生成成功
 					let lists=data.body.data.DataList;
-					console.log(lists)
+					//console.log(lists)
 					let len=lists.length;
 
 					if(len>0){	
 						for(let i=0;i<len;i++){
                             let list=lists[i]
                             if(list.Status===0){
-                                let created=new Date(list.Created).getTime()+20*60*1000
-							    let mss=created-this.nowTime;
+                                let created=new Date(list.Created).getTime()+20*60*1000-480*60*1000
+                                let mss=created-this.nowTime;
+                                
+                                if(i===0){
+                                    //alert('list.Created'+list.Created)
+                                    //alert('created'+created/1000/60/60+'    '+'this.nowTime'+this.nowTime/1000/60/60)
+                                }
                                 this.formatDuring(mss,list)//格式化时间
                             }
                             this.orders.push(list)
@@ -84,8 +89,8 @@ export default {
 						if(this.orders<1){
 							this.noProduct=true//表示没搜索到商品
 						}
-						console.log('看下缺省')
-						console.log(this.noProduct)
+						//console.log('看下缺省')
+						//console.log(this.noProduct)
 					}
 				}else{//没有更多商品了
 					this.stopLoad=true;//阻止继续加载
@@ -153,7 +158,11 @@ export default {
 		}
   },
   created(){
-	  this.nowTime=new Date().getTime();
+      this.nowTime=new Date().getTime();
+
+      //测试
+      let test=parseInt(new Date('2017-10-10T16:33:54.357').getTime()/1000/60/60) 
+      alert(test+'小时')
   }
   
 }

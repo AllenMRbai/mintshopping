@@ -35,7 +35,7 @@ export default {
   methods:{
     getList(){
         this.list=JSON.parse(decodeURIComponent(this.$route.params.list));
-    },
+    }
   },
   created(){
       //获得参数内的list

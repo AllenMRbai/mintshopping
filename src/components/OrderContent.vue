@@ -15,7 +15,7 @@
     </div>
 
     <!-- 商品面板 -->
-    <div class="pro_detail_pannel">
+    <router-link tag="div" :to="`/productDetail/${detail.GoodsID}`" class="pro_detail_pannel">
         <div class="flex_box flex_betwen">
             <div class="pic"><img :src="detail.GoodsPic"></div>
             <div class="right_box">
@@ -24,7 +24,7 @@
                 <div class="choice">{{ detail.GoodsOption }}</div>
             </div>
         </div>
-    </div>
+    </router-link>
 
     <!-- 结算面板 -->
     <div class="settle_pannel">
@@ -42,6 +42,11 @@
         </div>
     </div>
 
+	<!-- 下单信息 -->
+	<div class="order_pannel">
+		<p>订单编号：{{ detail.ID }}</p>
+		<p>下单时间：{{ detail.Created }}</p>
+	</div>
 </div>
     
 </template>
@@ -59,6 +64,9 @@ export default {
     return {
 
     }
+  },
+  created(){
+	  console.log(this.detail)
   }
 }
 </script>
@@ -165,5 +173,16 @@ export default {
 }
 .settle_pannel .settle_list .red{
 	color: #fa083a;
+}
+/* 下单信息 */
+.order_pannel{
+	background-color: #fff;
+	padding: 10px;
+	margin-top: 8px;
+}
+.order_pannel p{
+	font-size: 14px;
+	color: #b2b2b2;
+	line-height: 24px;
 }
 </style>

@@ -56,6 +56,9 @@ img{width: 100%;border:0;display: block;height: auto}
 	width: 100%;
 	width: 100vw;
 }
+.picker-items{
+	background-color: #fff;
+}
 .mint-popup{
 	background-color: rgba(0, 0, 0, 0);
 }

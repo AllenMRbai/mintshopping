@@ -21,7 +21,7 @@ export default {
 		noMore:false,//true表示没有更多商品了
 		noProduct:false,//true表示没搜索到任何商品，这将会显示缺省页面
 		orders:[],//产品lists 
-		nowTime:0//现在的时间
+		nowTime:''//现在的时间
     }
   },
   methods:{

@@ -8,10 +8,11 @@
         <img src="../assets/orderBanner_1.png">
     </div>
 </div>
-<order-content></order-content>
+<order-content :detail='list'></order-content>
 <div class="operate_bar">
 	<div class="flex_end line_top flex_box">
-		<div class="btn black">退款</div>
+		<!-- <div class="btn black">退款</div> -->
+        <div class="tips">等待发货中</div>
 	</div>
 </div>
 </div>
@@ -28,14 +29,17 @@ export default {
   },
   data () {
     return {
-
+        list:null
     }
   },
   methods:{
-
+    getList(){
+        this.list=JSON.parse(decodeURIComponent(this.$route.params.list));
+    }
   },
-  computed:{
-
+  created(){
+      //获得参数内的list
+      this.getList();
   }
 }
 </script>
@@ -102,5 +106,10 @@ export default {
 .operate_bar .btn.red{
 	border:1px solid #f10949;
 	color: #f10949;
+}
+.operate_bar .tips{
+    color: #999999;
+    font-size: 14px;
+    margin-right: 10px;
 }
 </style>
