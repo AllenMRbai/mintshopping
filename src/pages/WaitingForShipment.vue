@@ -15,8 +15,10 @@
         <div class="tips">等待发货中</div>
 	</div>
 </div>
+<div style="height:60px;"></div>
 </div>
-    
+
+
 </template>
 
 <script>

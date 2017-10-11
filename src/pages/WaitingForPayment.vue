@@ -19,6 +19,7 @@
 	</div>
 </div>
 
+<div style="height:60px;"></div>
 </div>
     
 </template>
@@ -87,14 +88,33 @@ export default {
            this.$router.push({
                 path:`/payment/${this.list.ID}/${this.list.GoodsPrice+this.list.Freight}`
             }) 	
-        }
+        },
+        /*
+        **将时间字符串拆分为 年 月 日 时 分 秒 毫秒
+        **（因为手机端的new Date('2017-10-11T09:38:00')的是间是GTM的时间，和本地时间相差8小时，所以需要该步处理）
+        **返回 Array [年，月，日，时，分，秒，毫秒]
+        **参数 String 类似'2017-10-11T09:38:00'
+        */
+        toLocalTime2(str){
+            let y=str.slice(0,4)//年
+            let mon=+str.slice(5,7)-1//月
+            let d=str.slice(8,10)//日
+            let h=str.slice(11,13)//时
+            let m=str.slice(14,16)//分
+            let s=str.slice(17,19)//秒
+         
+            return [y,mon,d,h,m,s]
+        },
+        
   },
   created(){
       //获得参数内的list
       this.getList();
       //格式化minutes和seconds
       this.nowTime=new Date().getTime();
-      let created=new Date(this.list.Created).getTime()+20*60*1000
+
+      let localT=this.toLocalTime2(this.list.Created)
+	  let created=new Date(localT[0],localT[1],localT[2],localT[3],localT[4],localT[5]).getTime()+20*60*1000
       let mss=created-this.nowTime;
       this.formatDuring(mss,this.list)
       

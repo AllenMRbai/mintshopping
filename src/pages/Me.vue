@@ -76,7 +76,7 @@ export default {
         {title:'收货地址管理',icon:require('../assets/me_icons_5.jpg'),link:'/address'},
         {title:'关注公众号',icon:require('../assets/me_icons_4.jpg'),link:'/theOther/QRcode'},
         {title:'密码修改',icon:require('../assets/me_icons_3.jpg'),link:'/sign/alter1'},
-        {title:'用户反馈',icon:require('../assets/me_icons_2.jpg'),link:'/sign/alter1'},
+        {title:'用户反馈',icon:require('../assets/me_icons_2.jpg'),link:'/theOther/feedback'},
         {title:'帮助',icon:require('../assets/me_icons_1.jpg'),link:'/theOther/help'},
       ]
     }
@@ -104,7 +104,7 @@ export default {
 				//this.goSignIn();
 			}
 			}).catch(function(err){
-				console.log(err)
+				throw(err)
 			})
 	  },
 	  getUser(){//获得用户个人信息
@@ -133,7 +133,7 @@ export default {
 				this.user.sculp='../../static/img/sculp_default.jpg';
 			}
 			}).catch(function(err){
-				console.log(err)
+				throw(err)
 			})
 	  },
 	  getToken(){//获得本地的token

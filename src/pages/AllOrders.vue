@@ -21,7 +21,9 @@ export default {
 		noMore:false,//true表示没有更多商品了
 		noProduct:false,//true表示没搜索到任何商品，这将会显示缺省页面
 		orders:[],//产品lists 
-		nowTime:0//现在的时间
+        nowTime:0,//现在的时间
+        
+        //test:true
     }
   },
   methods:{
@@ -64,13 +66,19 @@ export default {
 						for(let i=0;i<len;i++){
                             let list=lists[i]
                             if(list.Status===0){
-                                let created=new Date(list.Created).getTime()+20*60*1000-480*60*1000
+                                let localT=this.toLocalTime2(list.Created)
+                                let created=new Date(localT[0],localT[1],localT[2],localT[3],localT[4],localT[5]).getTime()+20*60*1000
+
                                 let mss=created-this.nowTime;
+
+                                // if(i===4){
+                                //     let asd=new Date(localT[0],localT[1],localT[2],localT[3],localT[4],localT[5]).getTime()//+20*60*1000
+                                //     //alert(list.Created)
+                                //     alert(localT[0]+'年'+localT[1]+'月'+localT[2]+'号 T'+localT[3]+':'+localT[4]+':'+localT[5])
+                                //     //alert(asd/1000/60/60+' '+new Date(2017,9,10,16,33,54,357)/1000/60/60+' '+this.nowTime/1000/60/60) 
+                                // }
                                 
-                                if(i===0){
-                                    //alert('list.Created'+list.Created)
-                                    //alert('created'+created/1000/60/60+'    '+'this.nowTime'+this.nowTime/1000/60/60)
-                                }
+
                                 this.formatDuring(mss,list)//格式化时间
                             }
                             this.orders.push(list)
@@ -99,9 +107,43 @@ export default {
 						this.noProduct=true//表示没搜索到商品
 					}
 				}
-			}).catch(err=>{})
-		},
+			}).catch(err=>{
+                throw(err)
+            })
+        },
 
+        /*
+        **将时间字符串拆分为 年 月 日 时 分 秒 毫秒
+        **（因为手机端的new Date('2017-10-11T09:38:00')的是间是GTM的时间，和本地时间相差8小时，所以需要该步处理）
+        **返回 Array [年，月，日，时，分，秒，毫秒]
+        **参数 String 类似'2017-10-11T09:38:00'
+        */
+        // toLocalTime(str){//这个方法在手机的还是有bug。10月10日解析出里的getDate为11日。好TM蛋疼
+        //     console.log(str)
+        //     let tDate=new Date(str)
+
+        //     let y=tDate.getFullYear()//年
+        //     let mon=tDate.getMonth()//月
+        //     let d=tDate.getDate()//日
+        //     let h=str.match(/T(\d+):/)[1]//时
+        //     let m=tDate.getMinutes()//分
+        //     let s=tDate.getSeconds()//秒
+        //     let mm=tDate.getMilliseconds()//毫秒
+        //     console.log([y,mon,d,h,m,s,mm])
+            
+            
+        //     return [y,mon,d,h,m,s,mm]
+        // },
+        toLocalTime2(str){
+            let y=str.slice(0,4)//年
+            let mon=+str.slice(5,7)-1//月
+            let d=str.slice(8,10)//日
+            let h=str.slice(11,13)//时
+            let m=str.slice(14,16)//分
+            let s=str.slice(17,19)//秒
+         
+            return [y,mon,d,h,m,s]
+        },
 		/*
         **这是一个异步的倒计时函数
         **返回 promise对象
@@ -155,14 +197,19 @@ export default {
 			//console.log(secondds)
 			list.minutes=minutes;
 			list.seconds=seconds;	
-		}
+        },
+        test(){
+            let time='2017-10-10T14:18:00'
+            let localT=this.toLocalTime(list.Created)
+            let created=new Date(localT[0],localT[1],localT[2],localT[3],localT[4],localT[5],localT[6]).getTime()+20*60*1000
+            let mss=created-this.nowTime;
+
+            alert(mss/1000/60/60)
+
+        }
   },
   created(){
       this.nowTime=new Date().getTime();
-
-      //测试
-      let test=parseInt(new Date('2017-10-10T16:33:54.357').getTime()/1000/60/60) 
-      alert(test+'小时')
   }
   
 }

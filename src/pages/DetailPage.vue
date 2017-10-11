@@ -208,7 +208,7 @@ export default {
 			  //console.log(body.data.TaoBao_details)
 		  })
 		  .catch((err)=>{
-			  console.log(err);
+			  throw(err)
 		  })
 	  },
 	  getSimilarProduct(){//获得相似商品
@@ -220,7 +220,7 @@ export default {
 			  //console.log(body.data.TaoBao_details)
 		  })
 		  .catch((err)=>{
-			  console.log(err);
+			  throw(err)
 		  })
 	  },
 	  goToTop(){

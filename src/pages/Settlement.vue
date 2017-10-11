@@ -127,7 +127,7 @@ export default {
 				this.initAddress()
 			}
 		}).catch(function(err){
-			console.log(err)
+			throw(err)
 		})
 	 },
 	 getProduct(){
@@ -184,7 +184,7 @@ export default {
 				}
 			})
 		}).catch(err=>{
-			
+			throw(err)
 		})
 		
 	  },

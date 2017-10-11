@@ -12,9 +12,9 @@
         </ul>
     </div>
 
-    <div class="Flow_chart flex_betwen">
+    <div class="Flow_chart flex_betwen" id="flow_chart">
         <div class="left_box">
-            <div class="long_line">
+            <div class="long_line" id="long_line">
                 <div class="short_white_line"></div>
             </div>
         </div>
@@ -73,22 +73,32 @@ export default {
             console.log(data)
             if(data.body.result){//表示有快递信息
                this.model=data.body.data
+               setTimeout(()=>{
+                   this.paintLine()
+               },100)
             }else{//没有快递信息
                 MessageBox('提示', '查不到快递信息，可能订单还未发货').then(action => {
                     this.$router.go(-1);
                 });
             }
-        }).catch(err=>{})
+        }).catch(err=>{
+            throw(err)
+        })
     },
     getOrderID(){
         return this.$route.params.orderID
+    },
+    paintLine(){//height:100%在手机里无法显示，得用该方法画那条竖线
+        let flowChart=document.getElementById('flow_chart');
+        let longLine=document.getElementById('long_line');
+
+        longLine.style.height=flowChart.offsetHeight+'px'
     }
   },
   created(){
       this.productPic=decodeURIComponent(this.$route.params.pic);
       this.getExpress();
   }
-
 
 }
 
@@ -105,7 +115,7 @@ export default {
     width: 54px;
 }
 .Flow_chart .left_box .long_line{
-    width: 2px;
+    width: 1px;
     height: 100%;
     background-color: #cccccc;
     margin:0 auto;

@@ -63,7 +63,10 @@ export default {
 					if(len>0){	
 						for(let i=0;i<len;i++){
 							let list=lists[i]
-							let created=new Date(list.Created).getTime()+20*60*1000
+
+							let localT=this.toLocalTime2(list.Created)
+							let created=new Date(localT[0],localT[1],localT[2],localT[3],localT[4],localT[5]).getTime()+20*60*1000
+							
 							let mss=created-this.nowTime;
 							this.formatDuring(mss,list)//格式化时间
 							this.orders.push(list)
@@ -89,9 +92,27 @@ export default {
 						this.noProduct=true//表示没搜索到商品
 					}
 				}
-			}).catch(err=>{})
+			}).catch(err=>{
+				throw(err)
+			})
 		},
 
+		/*
+        **将时间字符串拆分为 年 月 日 时 分 秒 毫秒
+        **（因为手机端的new Date('2017-10-11T09:38:00')的是间是GTM的时间，和本地时间相差8小时，所以需要该步处理）
+        **返回 Array [年，月，日，时，分，秒，毫秒]
+        **参数 String 类似'2017-10-11T09:38:00'
+        */
+        toLocalTime2(str){
+            let y=str.slice(0,4)//年
+            let mon=+str.slice(5,7)-1//月
+            let d=str.slice(8,10)//日
+            let h=str.slice(11,13)//时
+            let m=str.slice(14,16)//分
+            let s=str.slice(17,19)//秒
+         
+            return [y,mon,d,h,m,s]
+        },
 		/*
         **这是一个异步的倒计时函数
         **返回 promise对象

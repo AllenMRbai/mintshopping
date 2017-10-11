@@ -17,7 +17,7 @@
 		<div class="btn red">确认收货</div>
 	</div>
 </div>
-
+<div style="height:60px;"></div>
 </div>
     
 </template>

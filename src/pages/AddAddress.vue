@@ -191,7 +191,7 @@ export default {
 					//this.goSignIn();
 				}
 			}).catch(function(err){
-				console.log(err)
+				throw(err)
 			})
 		},
 		getCitiesList(id){

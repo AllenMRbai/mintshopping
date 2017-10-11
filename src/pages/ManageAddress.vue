@@ -80,7 +80,7 @@ export default {
 				//this.goSignIn();
 			}
 		}).catch(function(err){
-			console.log(err)
+			throw(err)
 		})
 	 },
   	  getToken(){//获得本地的token
@@ -113,7 +113,7 @@ export default {
 				}
 			})
 		}).catch(function(err){
-
+			throw(err)
 		});
 	  },
 	  setDefault(id,ind,card){//设为默认

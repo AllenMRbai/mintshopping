@@ -82,7 +82,9 @@ export default {
 						this.noProduct=true//表示没搜索到商品
 					}
 				}
-			}).catch(err=>{})
+			}).catch(err=>{
+				throw(err)
+			})
 		}
   }
   

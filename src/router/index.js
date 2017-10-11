@@ -45,6 +45,8 @@ import Logistics from '@/pages/Logistics'
 import TheOther from '@/pages/TheOther'
 import Help from '@/pages/Help'
 import QRcode from '@/pages/QRcode'
+import HelpContent from '@/pages/HelpContent'
+import Feedback from '@/pages/Feedback'
 
 Vue.use(Router)
 
@@ -269,10 +271,21 @@ let router= new Router({
           component:Help
         },
         {
+          path:'helpContent/:question/:answer',
+          name:'HelpContent',//帮助详情页面
+          component:HelpContent
+        },
+        {
           path:'QRcode',
           name:'QRcode',//关注二维码
           component:QRcode
+        },
+        {
+          path:'feedback',
+          name:'Feedback',//用户反馈
+          component:Feedback
         }
+
       ]
     }
   ]

@@ -52,7 +52,9 @@ export default {
           }else{
             MessageBox('提示', body.message);
           }
-        }).catch(function(err){})
+        }).catch(function(err){
+          throw(err)
+        })
       }else{
         MessageBox('提示', '请输入正确的手机号码')
       }
