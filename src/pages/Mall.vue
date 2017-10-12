@@ -5,9 +5,9 @@
     <!-- 头部 -->
 	<header>
 		<div class="search_bar_box red_bar_box flex_center">
-			<div class="follow_btn">关注</div>
-			<div class="search_bar">输入你想要搜索的东西</div>
-			<div class="search_btn"><img src="../assets/common_search_white.png"></div>
+			<div class="follow_btn" @click="followUs">关注</div>
+			<router-link class="search_bar" tag="div" to="/search">输入你想要搜索的东西</router-link>
+			<router-link class="search_btn" tag="div" to="/search"><img src="../assets/common_search_white.png"></router-link>
 		</div>
 	</header>
 
@@ -58,12 +58,19 @@
 		<div class="special_subject"><img src="../assets/special_subjuct.jpg"></div><!-- banner2 -->
 		
 		<!-- 可加载的卡片式产品列表 -->
-		<infinite-scroll-product-card :cards='productCards'></infinite-scroll-product-card>
+		<infinite-scroll-product-card :cards='productCards' :loading='stopLoad' :no-more='noMore' :no-product='noProduct'  @load-more='loadMore'></infinite-scroll-product-card>
 
 		<div class="bottom_blank_space" style="height: 50px;"></div><!-- 底部空白 -->
 	</main>
 
-
+	<mt-popup
+	v-model="popupVisible"
+	position="center">
+		<div class="qrcode_box">
+			<div class="qrcode"><img src="../assets/commen_qrcode.jpg"></div>
+			<p>长按二维码，扫码即可关注我们</p>
+		</div>
+	</mt-popup>
 </div>
     
 </template>
@@ -91,29 +98,120 @@ export default {
           {title:'电竞标配',title2:'有了它，轻松上王者',lineRight:false,lineBottom:true},
           {title:'9.9元专区',title2:'最爱逛的小商品商城',lineRight:true,lineBottom:false},
           {title:'人气推荐',title2:'这里有最火爆的商品',lineRight:false,lineBottom:false},
-      ],
-	  productCards:[
-		{proName:"江南古韵床上纯棉十件套被套整套床单枕头凉席卡了按时缴费啊是就",price:124,pic:'../../static/img/product.jpeg',id:'asdf456546467'},
-		{proName:"江南古韵床上纯棉十件套被套整套床单枕头凉席卡了按时缴费啊是就",price:200,pic:'../../static/img/product.jpeg',id:'asdf456546468'},
-		{proName:"江南古韵床上纯棉十件套被套整套床单枕头凉席卡了按时缴费啊是就",price:124,pic:'../../static/img/product.jpeg',id:'asdf456546467'},
-		{proName:"江南古韵床上纯棉十件套被套整套床单枕头凉席卡了按时缴费啊是就",price:200,pic:'../../static/img/product.jpeg',id:'asdf456546468'}
-	  ], 
+	  ],
+      popupVisible:false,
+
+	  pageIndex:1,
+
+	  //以下为无限滚动盒子的参数
+	  stopLoad:false,//用来判断现在是否可以加载,true表示停止加载
+	  noMore:false,//true表示没有更多商品了
+	  noProduct:false,//true表示没搜索到任何商品，这将会显示缺省页面
+	  productCards:[]
     }
   },
+  methods:{
+	loadMore(){
+		//console.log('开始加载')
+		if(this.noMore){
+			return;
+		}
+		if(this.stopLoad){
+			return;
+		}
+		//console.log('通过是撒飞华健康')
+		this.stopLoad=true;
+		this.$http.get(`http://api.lingkuaiyou.com/Goods/GetHomeGoods?pageIndex=${this.pageIndex}`)
+		.then((data)=>{
+			let body=JSON.parse(data.bodyText)
+			//console.log('这里没有缓存')
+			//console.log(body.result);
+			//console.log('这是本次传过来的商品个数'+body.data.DataList.length)
+			console.log('我正他妈无语了')
+			if( body.result ){
+				let productLists=body.data.DataList;
+				let len=productLists.length;
+				if(len>0){
+					for(let i=0;i<len;i++){
+						this.productCards.push(productLists[i]);
+					}
+					this.pageIndex++;
+					this.stopLoad=false;
+					console.log('安静地方');
+					console.log(this.pageIndex);
+				}else{
+					this.noMore=true;//表示没有更多商品了
+					if(this.productLists<1){
+						this.noProduct=true//表示没搜索到商品
+					}
+				}
+			}else{//没有更多商品了
+				this.stopLoad=true;//阻止继续加载
+				this.noMore=true;//表示没有更多商品了
+				if(this.productLists<1){
+					this.noProduct=true//表示没搜索到商品
+				}
+			}
+		},(err)=>{
+			console.log(err);
+		})
+	},
+	followUs(){
+		this.popupVisible=true;
+	}
+  },
   created:function(){
-	  this.$http.get('getProducts')
-	  .then((data)=>{
-		//this.productCards=data;
-	  },(err)=>{
-		  console.log(err);
-	  })
-  }
+	  this.loadMore();
+	  	 
+  },
+  /*mounted(){
+	  this.$nextTick(function () {
+			console.log('<-- 页面打开')
+	  console.log('pageIndex='+this.pageIndex)
+	  console.log('body的高度高度'+document.body.scrollTop)
+	  console.log('页面打开-->')
+		})
+	  
+	  
+  }*/
+//   deactivated(){
+// 	  console.log('没有被缓存')
+//   },
+//   activated(){
+// 	   console.log('已经缓存')
+//   }
 
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+/* 关注二维码 */
+.qrcode_box{
+	width: 60%;
+	width: 60vw;
+	padding:20px 10px;
+	background-color: #fff;
+	border-radius: 8px;
+}
+.qrcode_box .qrcode{
+	width: 50vw;
+	height: 50vw;
+	margin:0 auto;
+	margin-bottom: 10px;
+}
+.qrcode_box p{
+	text-align: center;
+	font-size: 14px;
+	color: #666666;
+}
+/* .allen{
+	background-color: red;
+	color: #fff;
+	width: 50vw;
+	height: 50px;
+	text-align: center
+} */
 header{
 	width: 100%;
 	width: 100vw;

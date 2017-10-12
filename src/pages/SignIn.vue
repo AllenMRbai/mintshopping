@@ -8,7 +8,7 @@
   <div class="sign_in" @click="login">登录</div>
   <ul class="bottom_box flex_betwen">
     <router-link tag="li" to="/sign/signUp1">新用户注册</router-link>
-    <router-link tag="li" to="/sign/alter">忘记密码</router-link>
+    <router-link tag="li" to="/sign/alter1">忘记密码</router-link>
   </ul>
 </div>
 </template>
@@ -16,6 +16,7 @@
 <script>
 import TextBar from '@/components/TextBar'
 import PasswordBar from '@/components/PasswordBar'
+import { md5 } from '@/assets/js/tools.js'
 import { MessageBox,Indicator } from 'mint-ui';
 
 export default {
@@ -38,18 +39,32 @@ export default {
       this.password=text;
     },
     login:function(){
+      console.log('看这里')
+      console.log(this.$route)
       if(this.frontValidate()){
         Indicator.open();
-        this.$http.get(`http://api.lingkuaiyou.com/User/Login?mobile=${this.account}&password=${this.password}`).then(function(data){
+        
+        let md5_password=md5(this.password);
+        console.log(md5_password)
+        this.$http.get(`http://api.lingkuaiyou.com/User/Login?mobile=${this.account}&password=${md5_password}`).then(function(data){
           Indicator.close();
           let body=JSON.parse(data.bodyText);
+          console.log(data.bodyText)
           if(body.result){
-            MessageBox('提示', '登录成功！');
-            console.log(body.data);
+            //MessageBox('提示', '登录成功！');
+            //console.log(body.data);
+            localStorage.setItem("token",body.data);
+            let redirect=this.$route.query.redirect;
+            if(!redirect){
+               this.$router.replace('/me');
+            }
+               this.$router.replace(redirect);
           }else{
             MessageBox('提示', body.message);
           }
-        }).catch(function(err){})
+        }).catch(function(err){
+          throw(err)
+        })
 
       }else{
         MessageBox('提示', '账号 或 密码不能为空');
@@ -59,9 +74,9 @@ export default {
       return this.account && this.password;
     }
   },
-  computed:{
-
-  },
+  created(){
+    console.log(this.$route)
+  }
 }
 
 </script>

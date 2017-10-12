@@ -2,9 +2,9 @@
 <div>
 
     <transition name="fade" mode="out-in" appear>
-        <keep-alive> 
+        <!-- <keep-alive>  -->
             <router-view></router-view>
-        </keep-alive>
+        <!-- </keep-alive> -->
     </transition>
 
     <!-- 导航 -->
@@ -25,7 +25,7 @@
 <script>
 
 export default {
-  name: 'MainPage',
+  //name: 'MainPage',
   data () {
     return {
       pageNow:'mall',

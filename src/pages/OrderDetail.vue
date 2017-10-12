@@ -1,16 +1,21 @@
 <template>
+<div>
 
-<div>这是修改密码</div>
+    <keep-alive> 
+        <router-view></router-view>
+    </keep-alive>
 
+</div>
+    
 </template>
 
 <script>
 
 export default {
-  name: 'Alter',
+  name: 'OrderDetail',
   data () {
     return {
-      
+
     }
   },
   methods:{
@@ -18,7 +23,7 @@ export default {
   },
   computed:{
 
-  },
+  }
 }
 </script>
 

@@ -3,21 +3,26 @@
         <!-- 加载内容盒子 -->
         <div 
             class="flex_box flex_betwen load_content_box" 
-            v-if="haveProducts" 
+             v-show='!noProduct' 
             v-infinite-scroll="loadMore" 
             :infinite-scroll-disabled="loading" 
-            infinite-scroll-distance="40">
+            infinite-scroll-distance="200">
 
-            <div class="product_card" v-for="card in cards" :key="card.id">
-                <div class="pro_pic"><img v-lazy.product-card="card.pic"></div>
-                <div class="pro_name">{{ card.proName }}</div>
-                <h3>￥<span>{{ card.price }}</span></h3>
-            </div> 
+            <router-link tag="div" :to="`/productDetail/${card.ID}`" class="product_card" v-for="card in cards" :key="card.ID">
+                <div class="pro_pic flex_center"><img v-lazy.product-card="card.Pic"></div>
+                <div class="pro_name">{{ card.Title }}</div>
+                <h3>￥<span>{{ card.Price }}</span></h3>
+            </router-link> 
             
         </div>
         <!-- 缺省页面 -->
-        <div class="default_page hidden" v-else>
-            <h2>没找到任何商品！</h2>
+        <div  v-show='noProduct'>
+            <div class="default_pic"><img src="../assets/default_nogoods.png"></div>
+		    <div class="default_title">没找到商品</div>
+        </div>
+        <div class="load_tips" v-show='!noProduct'>
+            <div v-if='!noMore'>正在加载中...</div>
+            <div v-else>没有更多商品了</div>
         </div>
     </div>
 </template>
@@ -27,21 +32,29 @@ export default {
   name: 'productCard',
   props:{
       'cards':{
-            type:Array,
-            default:[
-                    {proName:"江南古韵床上纯棉十件套被套整套床单枕头凉席卡了按时缴费啊是就",price:156,pic:'../../static/img/product.jpeg',id:'asdf456546465'} 
-                ]
-        }
+            type:Array
+        },
+      'loading':{
+          type:Boolean,
+          default:false//若为真，则无限滚动不会被触发 默认为false
+      },
+      'noMore':{
+          type:Boolean
+      },
+      'noProduct':{//没有商品  true表示一个商品也没有，false表示有商品 或还在请求中，默认为false
+          type:Boolean,
+          default:false
+      }
   },
 
   data(){
       return {
-        loading:false,//若为真，则无限滚动不会被触发 默认为false
+        
       }
   },
   methods:{
     loadMore() {
-        console.log("emit load")
+        this.$emit('load-more')
     }
   },
   computed:{
@@ -53,8 +66,32 @@ export default {
 </script>
 
 <style scoped>
-/*可加载的产品卡片*/
+/* 缺省页面 */
+.default_pic{
+	width: 70%;
+	margin:0 auto;
+	margin-top:4vh;
+	opacity: .7;
+}
+.default_title{
+	text-align: center;
+	color: #c0c1c2;
+	font-size: 16px;
+}
 
+.pro_pic img{
+    width: auto;
+    height: auto;
+    margin:auto auto;
+    max-width: 100%;
+    display: block;
+}
+/*可加载的产品卡片*/
+.pro_pic image[lazy=loading] {
+  width: 20px;
+  height: 20px;
+  margin: auto;
+}
 .load_content_box{
 	width: 96%;
 	width: 96vw;
@@ -97,5 +134,20 @@ export default {
 	text-align: center;
 	padding:6px 0;
 	font-size: 14px;
+}
+/* 加载提示 */
+.load_tips{
+    background-color: #fff;
+    height: 30px;
+    text-align: center;
+    font-size: 14px;
+    color: #999999;
+    line-height: 30px;
+}
+/* 缺省页面 */
+.default_page{
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
 }
 </style>

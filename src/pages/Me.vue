@@ -3,8 +3,8 @@
   <div class="me_background">
 		<div class="me_pannel">
 			<div class="flex_box flex_start">
-				<router-link tag="div" to="/sign/signIn" class="sculpture"><img src="../assets/sculp_default.jpg"></router-link>
-				<router-link tag="div" to="/sign/signIn" class="name">点击登录</router-link>
+				<div class="sculpture" @click="goSignIn"><img :src="user.sculp"></div>
+				<div class="name"  @click="goSignIn">{{ user.nickName }}</div>
 			</div>
 			
 		</div>
@@ -25,7 +25,7 @@
           <div class="order_icon" :class="'order_'+index">
             <div class="red_bot" v-if="order.dot">{{ order.dot }}</div>
           </div>
-          <p>待付款</p>
+          <p>{{ order.title }}</p>
         </router-link>
         <li class="line_right" :key="index" v-if="index!==(orders.length-1)"></li>
       </template>
@@ -38,16 +38,16 @@
 			<h4>其他</h4>
 		</div>
 
-		<div class="lists_box" v-for="(opt,index) in options" :key="index">
+		<router-link tag="div" :to="opt.link" class="lists_box" v-for="(opt,index) in options" :key="index">
 			<div class="list flex_betwen">
 				<div class="icon"><img :src="opt.icon"></div>
-				<div class="right flex_betwen line_bottom">
+				<div class="right flex_betwen" :class="{'line_bottom':index!==(options.length-1)}">
 					<div class="title">{{ opt.title }}</div>
 					<div class="arrow"><img src="../assets/common_rightarrow_black.png"></div>
 				</div>
 			</div>
 
-		</div>
+		</router-link>
 	</div>
 
 	<div class="blanck_space" style="height: 50px;"></div>
@@ -59,31 +59,104 @@
 
 export default {
   name: 'me',
-  components:{
-
-  },
   data () {
     return {
+	  user:{
+		  sculp:'../../static/img/sculp_default.jpg',
+		  nickName:'点击登录',
+		  haveSignIn:false
+	  },
       orders:[
-        {title:'待付款',dot:2,link:'/orders/allOrders'},
-        {title:'待发货',dot:0,link:'/orders/pendingPayment'},
-        {title:'已发货',dot:1,link:'/orders/pendingShipment'},
-        {title:'退货/退款',dot:0,link:'/orders/shipped'}
+        {title:'待付款',dot:0,link:'/orders/pendingPayment'},
+        {title:'待发货',dot:0,link:'/orders/pendingShipment'},
+        {title:'已发货',dot:0,link:'/orders/shipped'},
+        {title:'退货/退款',dot:0,link:'/orders/allOrders'}
       ],
       options:[
-        {title:'收货地址管理',icon:require('../assets/me_icons_5.jpg')},
-        {title:'关注公众号',icon:require('../assets/me_icons_4.jpg')},
-        {title:'密码修改',icon:require('../assets/me_icons_3.jpg')},
-        {title:'用户反馈',icon:require('../assets/me_icons_2.jpg')},
-        {title:'帮助',icon:require('../assets/me_icons_1.jpg')},
-        {title:'客服',icon:require('../assets/me_icons_0.jpg')}
+        {title:'收货地址管理',icon:require('../assets/me_icons_5.jpg'),link:'/address'},
+        {title:'关注公众号',icon:require('../assets/me_icons_4.jpg'),link:'/theOther/QRcode'},
+        {title:'密码修改',icon:require('../assets/me_icons_3.jpg'),link:'/sign/alter1'},
+        {title:'用户反馈',icon:require('../assets/me_icons_2.jpg'),link:'/theOther/feedback'},
+        {title:'帮助',icon:require('../assets/me_icons_1.jpg'),link:'/theOther/help'},
       ]
     }
   },
+  methods:{
+	  getDot(){//获取各个状态的订单有几个
+		  let token=this.getToken();
+		  if(!token){
+			  return;
+		  }
+		  //console.log(token)
+		  this.$http.get(`http://api.lingkuaiyou.com/Order/GetOrderStatusNum?token=${token}`).then(function(data){
+			//let body=JSON.parse(data.bodyText);
+			console.log(data.body)
+			if(data.body.result){//成功获取个人信息，这表明该用户登录成功
+				//MessageBox('提示', '登录成功！');
+				//console.log(body.data);
+				//localStorage.setItem("token",body.data);
+				//this.$router.replace('/me');
+				this.orders[0].dot=data.body.data.ToPay;
+				this.orders[1].dot=data.body.data.ToDelivery;
+				this.orders[2].dot=data.body.data.ToReceipt;
+				//this.orders[3].dot=data.body.data.ToPay;
+			}else{
+				//this.goSignIn();
+			}
+			}).catch(function(err){
+				throw(err)
+			})
+	  },
+	  getUser(){//获得用户个人信息
+		  let token=this.getToken();
+		  if(!token){
+			  return;
+		  }
+		  this.user.haveSignIn=true;
+		  this.user.nickName='加载中...';
+		  //console.log(token)
+		  this.$http.get(`http://api.lingkuaiyou.com/User/GetUserInfoInfo?token=${token}`).then(function(data){
+			//let body=JSON.parse(data.bodyText);
+			//console.log(data.body)
+			if(data.body.result){//成功获取个人信息，这表明该用户登录成功
+				//MessageBox('提示', '登录成功！');
+				//console.log(body.data);
+				//localStorage.setItem("token",body.data);
+				//this.$router.replace('/me');
+				this.user.haveSignIn=true;
+				this.user.nickName=data.body.data.NickName || data.body.data.UserName || '您还未设置昵称';
+				this.user.sculp='../../static/img/sculp_cat.jpg';
+			}else{
+				//this.goSignIn();
+				this.user.haveSignIn=false;
+				this.user.nickName='点击登录';
+				this.user.sculp='../../static/img/sculp_default.jpg';
+			}
+		  }).catch(function(err){
+			throw(err)
+		  })
+	  },
+	  getToken(){//获得本地的token
+		let token=localStorage.getItem('token');
+		if(token===null || token===''){
+			return false;
+		}
+		return encodeURIComponent(token);
+	  },
+	  goSignIn(){//跳转到登录页面
+	  	if(this.user.haveSignIn){//如果已经登录的话，就不会跳转的登录界面
+		  return;
+		}
+		this.$router.push({
+			path:'/sign/signIn',
+			query: { redirect: this.$route.fullPath }
+		});//'/sign/signIn'
+	  }
+  },
   created:function(){
-
+	  this.getDot();
+	  this.getUser();
   }
-
 }
 </script>
 

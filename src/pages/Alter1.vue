@@ -1,6 +1,6 @@
 <template>
 <div>
-  <div class="title">欢迎来到猪圈圈！</div>
+  <div class="title">修改密码</div>
  
   <div class="input_box">
     <div class="list flex_betwen line_bottom">
@@ -23,7 +23,7 @@ import PasswordBar from '@/components/PasswordBar'
 import { MessageBox,Indicator } from 'mint-ui';
 
 export default {
-  name: 'SignIn',
+  name: 'Alter1',
   components:{
     TextBar,
     PasswordBar
@@ -42,13 +42,13 @@ export default {
         return;
       }
       if(this.frontValidate2()){
-        sessionStorage.setItem("registerPhoneNumber", this.phone);
+        sessionStorage.setItem("ChangePasswordPhone", this.phone);
         Indicator.open();
         this.$http.get(`http://api.lingkuaiyou.com/User/SendCode?mobile=${this.phone}`).then(function(data){
           Indicator.close();
           let body=JSON.parse(data.bodyText);
           if(body.result){
-            this.$router.replace('/sign/signUp2');
+            this.$router.replace('/sign/alter2');
           }else{
             MessageBox('提示', body.message);
           }
@@ -76,6 +76,9 @@ export default {
       return (this.phone.length==11)
     }
   },
+  watch:{
+
+  }
 }
 
 </script>
