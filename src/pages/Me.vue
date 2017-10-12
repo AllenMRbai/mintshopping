@@ -132,9 +132,9 @@ export default {
 				this.user.nickName='点击登录';
 				this.user.sculp='../../static/img/sculp_default.jpg';
 			}
-			}).catch(function(err){
-				throw(err)
-			})
+		  }).catch(function(err){
+			throw(err)
+		  })
 	  },
 	  getToken(){//获得本地的token
 		let token=localStorage.getItem('token');

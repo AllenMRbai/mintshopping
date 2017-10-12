@@ -33,13 +33,17 @@ export default {
         });//'/sign/signIn'
     },
     submit(){
+      if(!this.verification()){
+        return;
+      }
+
       let token=this.getToken();//获取token
       if(!token){//如果没有token就直接跳到登录页面
           this.goSignIn();
           return;
       }
       Indicator.open();
-      let message=encodeURIComponent(this.message)
+      let message=encodeURIComponent(this.message.trim())
       this.$http.get(`http://api.lingkuaiyou.com/Other/UserFeedback?content=${message}&token=${token}`).then(data=>{
         Indicator.close();
         if(data.body.result){
@@ -53,6 +57,9 @@ export default {
         Indicator.close();
         throw(err)
       })
+    },
+    verification(){
+      return this.message.trim()
     }
   }
 }

@@ -76,11 +76,21 @@ export default {
       },
       followUs(){
         this.popupVisible=true;
+      },
+      //监听回车事件
+      listenEnter(){
+        document.onkeydown = (event)=> {
+            var e = event || window.event;
+            if (e && e.keyCode == 13) { //回车键的键值为13
+                this.searchBtn();
+            }
+        };
       }
   },
   mounted(){
       let inp=document.getElementById('search_input');
       inp.focus();
+      this.listenEnter();
   }
 }
 </script>

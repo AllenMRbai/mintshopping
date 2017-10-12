@@ -74,9 +74,9 @@ export default {
       return this.account && this.password;
     }
   },
-  computed:{
-
-  },
+  created(){
+    console.log(this.$route)
+  }
 }
 
 </script>

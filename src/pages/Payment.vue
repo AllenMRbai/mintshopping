@@ -44,7 +44,7 @@ export default {
   },
   data () {
     return {
-        payWay:''
+        payWay:''//该值为wechat或alipay。微信浏览器为微信支付，其他浏览器为支付宝
     }
       
   },
@@ -52,24 +52,67 @@ export default {
 	  
   },
   methods:{
-	  showWich(){
-		    var ua = navigator.userAgent.toLowerCase();
-			if(ua.match(/MicroMessenger/i)=="micromessenger") {//如果是微信网页，显示微信支付
-				return 'wechat';
-			} else {//如果不是微信网页，显示支付宝
-				return 'alipay';
-			}
-	  },
-	  payIt(){
-		  let now=this.payWay;
-		  if(now==='wechat'){
-			  MessageBox('提示', '这是微信支付');
-		  }else if(now==='alipay'){
-			  MessageBox('提示', '这是支付包支付');
-		  }else{
-			  MessageBox('提示', '支付页面出错，请稍等一会再点击支付');
-		  }
-	  }
+	//判断浏览器类型
+	showWich(){
+		var ua = navigator.userAgent.toLowerCase();
+		if(ua.match(/MicroMessenger/i)=="micromessenger") {//如果是微信网页，显示微信支付
+			return 'wechat';
+		} else {//如果不是微信网页，显示支付宝
+			return 'alipay';
+		}
+	},
+	//支付按钮
+	payIt(){
+		let now=this.payWay;
+
+		if(now==='wechat'){
+			this.wechatInterface();//微信支付
+		}else if(now==='alipay'){
+			this.alipayInterface();//支付宝支付
+		}else{
+			MessageBox('提示', '支付页面出错，请稍等一会再点击支付');
+		}
+	},
+	//支付宝支付接口
+	alipayInterface(){
+
+		let token=this.getToken();//获取token
+		if(!token){//如果没有token就直接跳到登录页面
+			this.goSignIn();
+			return;
+		}
+		
+		let id=this.$route.params.orderId;
+		Indicator.open();
+		this.$http.get(`http://api.lingkuaiyou.com/Order/Alipay_WEB?id=${id}&token=${token}`).then(data=>{
+			Indicator.close();
+
+			console.log('支付宝支付中')
+			console.log(data)
+			document.write(data.body.data);
+		}).catch(err=>{
+			throw(err)
+		})
+	},
+	//微信支付接口
+	wechatInterface(){
+		MessageBox('提示', '这是微信支付');
+	},
+	//获得本地的token
+	getToken(){
+		let token=localStorage.getItem('token');
+		if(token===null || token===''){
+			return false;
+		}
+		return encodeURIComponent(token);
+	},
+	//跳转到登录页面
+	goSignIn(){
+		this.$router.push({
+			path:'/sign/signIn',
+			query: { redirect: this.$route.fullPath }
+		});//'/sign/signIn'
+	},
   },
   created(){
 	  this.payWay=this.showWich();

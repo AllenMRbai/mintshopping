@@ -59,8 +59,8 @@ export default {
       categorys:[
         {title:'为你推荐',dataId:'01'},
         {title:'女装',dataId:'02'},
-        {title:'女鞋',dataId:'03'},
         {title:'男装',dataId:'04'},
+        {title:'鞋包',dataId:'03'},
         {title:'男鞋',dataId:'05'},
         {title:'内衣',dataId:'06'},
         {title:'母婴',dataId:'07'},
