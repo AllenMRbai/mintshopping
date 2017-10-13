@@ -148,6 +148,8 @@ export default {
           this.commonSearch();//重新搜索排序
 	  },
 	  loadMore(kword){
+
+		  console.log('执行了几次')
 		if(this.noMore){//没有更多商品的时候，不能发送请求
 			return;
 		}
@@ -161,23 +163,33 @@ export default {
             '价格由低到高':2,
             '价格由高到低':3
 		}
+
+		
 		
 		this.stopLoad=true;//开启停止加载，防止恶性加载
 		this.$http.get(`http://api.lingkuaiyou.com/Goods/GetGoodsList?name=${kword}&pageIndex=${this.pageIndex}&state=${sortMap[this.screenOut.type]}&startpri=${this.screenOut.min}&endpri=${this.screenOut.max}`)//${sortMap[this.screenOut.type]}
 		.then((data)=>{
 			let body=JSON.parse(data.bodyText)
-			console.log('又搜索了 他呀的')
+			console.log(body)
 			if( body.result ){
 				let productLists=body.data.DataList;
 				let len=productLists.length;
+				//console.log(len)
 				if(len>0){
 					for(let i=0;i<len;i++){
 						this.productLists.push(productLists[i]);
 					}
+					if(len<10){
+						this.pageIndex++;
+						this.stopLoad=true;
+						this.noMore=true;//表示没有更多商品了
+						return;
+					}
 					this.pageIndex++;
 					this.stopLoad=false;
-					//this.noProduct=false//表示没搜索到商品
 				}else{
+					//console.log('没东西')
+					this.stopLoad=true;//阻止继续加载;
 					this.noMore=true;//表示没有更多商品了
 					if(this.productLists<1){
 						this.noProduct=true//表示没搜索到商品
@@ -185,6 +197,7 @@ export default {
 					
 				}
 			}else{//没有更多商品了
+				//console.log('result为false')
 				this.stopLoad=true;//阻止继续加载
 				this.noMore=true;//表示没有更多商品了
 				if(this.productLists<1){
