@@ -12,10 +12,10 @@
 		<ul class="left_nav">
 			<li 
         v-for="(category,index) in categorys" 
-        :class="{'active':nowAt===index}"
+        :class="{'active':nowAt===category.dataId}"
         :key="index" 
         :data-id="category.dataId" 
-        @click='changeCategoryPage(index,$event)'>
+        @click='changeCategoryPage(category,$event)'>
         {{ category.title }}</li>
 		</ul>
 		
@@ -23,8 +23,8 @@
       <template v-for="(detCategory,index) in detailedCategorys">
         <div class="title" :key="index">{{ detCategory.title }}</div>
         <ul class="cell_box flex_start" :key="index">
-          <li v-for="(list,index) in detCategory.lists" :key="index" :data-keyword="list.keyWords">
-            <div><img :src="list.pic"></div>
+          <li v-for="(list,index) in detCategory.lists" :key="index" :data-keyword="list.keyWords" @click="goSearch(list)">
+            <div class="cate_pic"><img :src="list.pic"></div>
             <p>{{ list.title }}</p>
           </li>
 
@@ -55,35 +55,8 @@ export default {
   },
   data () {
     return {
-      nowAt:0,
-      categorys:[
-        {title:'为你推荐',dataId:'01'},
-        {title:'女装',dataId:'02'},
-        {title:'男装',dataId:'04'},
-        {title:'鞋包',dataId:'03'},
-        {title:'男鞋',dataId:'05'},
-        {title:'内衣',dataId:'06'},
-        {title:'母婴',dataId:'07'},
-        {title:'手机',dataId:'08'},
-        {title:'数码',dataId:'09'},
-        {title:'家电',dataId:'10'},
-        {title:'美妆',dataId:'11'},
-        {title:'箱包',dataId:'12'},
-        {title:'运动',dataId:'13'},
-        {title:'户外',dataId:'14'},
-        {title:'家装',dataId:'15'},
-        {title:'家纺',dataId:'16'},
-        {title:'家居',dataId:'17'},
-        {title:'鲜花园艺',dataId:'18'},
-        {title:'饰品',dataId:'19'},
-        {title:'食物',dataId:'20'},
-        {title:'生鲜',dataId:'21'},
-        {title:'汽车摩托',dataId:'22'},
-        {title:'医药',dataId:'23'},
-        {title:'图书',dataId:'24'},
-        {title:'通信',dataId:'25'},
-        {title:'乐器',dataId:'26'}
-      ],
+      nowAt:'01',//当前二级分类页面对应的一级分类ID号
+      categorys:[],
       detailedCategorys:[
         {
           title:'女装',
@@ -95,32 +68,137 @@ export default {
             {title:'雪纺衫',pic:'../../static/img/classify_4.jpg',keyWords:'雪纺衫 女'},
             {title:'牛仔裤',pic:'../../static/img/classify_5.jpg',keyWords:'牛仔裤 女'}, 
           ]
-        },
-        {
-          title:'女鞋',
-          lists:[
-            {title:'平底凉鞋',pic:'../../static/img/classify_6.jpg',keyWords:'平底凉鞋 女'}, 
-            {title:'高跟凉鞋',pic:'../../static/img/classify_7.jpg',keyWords:'高跟凉鞋 女'},
-            {title:'坡跟凉鞋',pic:'../../static/img/classify_8.jpg',keyWords:'坡跟凉鞋 女'}
-          ]
         }
-
+        
       ],
       popupVisible:false
 
     }
   },
   methods:{
+		//点击三级分类直接跳转搜索
+		goSearch(list){
+			
+			let enc=encodeURI(list.keyWords)
+			this.$router.push({
+				path:`/doSearch/${enc}`
+			})
+		},
     changeCategoryPage(ind){
-      this.nowAt=ind;
+      this.nowAt=ind.dataId;
     },
     followUs(){
       this.popupVisible=true;
-    }
+    },
+		/*
+		获得一级菜单
+		*/
+		getOneLevel(){
+			this.$http.get('http://api.lingkuaiyou.com/Goods/GetOneCategoryList').then((data)=>{
+				//console.log(data)
+				if(data.body.result){
+					let lists=data.body.data.DataList;
+					let len=lists.length;
+					for(let i=0;i<len;i++){
+						let li=new Object();
+						li.title=lists[i].Name;
+						li.dataId=lists[i].ID;
+						this.categorys.push(li)
+					}
+				}else{
+					alert(data.body.message)
+				}
+			})
+		},
+		/*
+		获得二级菜单
+		*/
+		getTwoLevel(){
+			this.detailedCategorys.splice(0)
+			this.$http.get(`http://api.lingkuaiyou.com/Goods/GetTwoCategoryList?id=${this.nowAt}`).then((data)=>{
+				//console.log(data)
+				if(data.body.result){
+					let lists=data.body.data.DataList;
+					let len=lists.length;
+					for(let i=0;i<len;i++){
+						let li=new Object();
+						li.title=lists[i].Name;
+						this.getThreeLevel(li,lists[i].ID)
+					}
+					//console.log('开心')
+					//console.log(this.detailedCategorys)
+				}else{
+					alert(data.body.message)
+				}
+			})
+		},
+		/*
+		获得三级菜单
+		*/
+		getThreeLevel(li,twoID){
+			li.lists=[];
+			this.$http.get(`http://api.lingkuaiyou.com/Goods/GetThreeCategoryList?id=${twoID}`).then((data)=>{
+				//console.log(data)
+				//{title:'印花连衣裙',pic:'../../static/img/classify_0.jpg',keyWords:'印花连衣裙 女'},
+				//console.log('三级')
+				//console.log(data)
+				if(data.body.result){
+					let lists=data.body.data.DataList;
+					let len=lists.length;
+					for(let i=0;i<len;i++){
+						let sli=new Object();
+						sli.title=lists[i].Name;
+						sli.pic=lists[i].Pic;
+						sli.keyWords=lists[i].SearchName;
+						li.lists.push(sli)
+					}
+					this.detailedCategorys.push(li)
+				}else{
+					alert(data.body.message)
+				}
+			})
+		},
+		/*
+		一次性获得二级和三级菜单
+		*/
+		getTwoAndThree(){
+			this.detailedCategorys.splice(0)
+			this.$http.get(`http://api.lingkuaiyou.com/Goods/GetTwoAndThreeCategoryList?id=${this.nowAt}`).then((data)=>{
+				console.log(data);
+				if(data.body.result){
+					let lists=data.body.data;
+					let len=lists.length;
+					for(let i=0;i<len;i++){
+						let li=new Object();
+						li.title=lists[i].Name;
+						li.lists=[];
+						let slists=data.body.data[i].data;
+						let slen=slists.length;
+						for(let o=0;o<slen;o++){
+							let sli=new Object();
+							sli.title=slists[o].Name;
+							sli.pic=slists[o].Pic;
+							sli.keyWords=slists[o].SearchName;
+							li.lists.push(sli);
+						}
+						this.detailedCategorys.push(li)
+					}
+				}else{
+					alert(data.body.message)
+				}
+			})
+		}
   },
   created:function(){
-
-  }
+		this.nowAt=this.$route.params.dataid;
+		this.getOneLevel();
+		this.getTwoAndThree();
+	},
+	watch:{
+		nowAt(){
+			this.getTwoAndThree()
+		}
+	}
 
 }
 </script>
@@ -254,12 +332,18 @@ header{
 }
 .main_body .right_box .cell_box li{
 	width: 20vw;
-	margin-bottom: 10px;
+	margin-bottom: 18px;
   margin-left: 2.5vw;
 }
+.main_body .right_box .cell_box .cate_pic{
+	width: 20vw;
+	height: 20vw;
+	padding: 2px;
+}
+
 .main_body .right_box .cell_box p{
 	font-size: 12px;
-	color: #333333;
+	color: #666666;
 	padding: 6px 0;
 	margin-top: 3px;
 	text-align: center;

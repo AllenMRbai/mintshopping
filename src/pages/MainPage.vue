@@ -31,7 +31,7 @@ export default {
       pageNow:'mall',
       navLists:[
           {EnglishName:'mall',ChineseName:'首页',link:'/'},
-          {EnglishName:'classify',ChineseName:'分类',link:'/classify'},
+          {EnglishName:'classify',ChineseName:'分类',link:'/classify/01'},
           {EnglishName:'me',ChineseName:'我',link:'/me'}
       ]
     }

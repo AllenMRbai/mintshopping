@@ -84,7 +84,7 @@ let router= new Router({
           component:Mall
         },
         {
-          path:'classify',
+          path:'classify/:dataid',
           name:'Classify',//分类
           component:Classify
         },
@@ -209,6 +209,12 @@ let router= new Router({
       name:'Search',
       component:Search,
       
+    },
+    //带参数的搜索页面
+    {
+      path:'/doSearch/:keyword',
+      name:'DoSearch',
+      component:Search,
     },
     //商品详情页
     {

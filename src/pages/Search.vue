@@ -4,7 +4,7 @@
 		<div class="search_bar_box white_bar_box flex_center ">
 			<div class="follow_btn" @click="followUs">关注</div>
             <label class="search_bar">
-                <input type="text" placeholder="输入你想搜索的东西" id="search_input">
+                <input type="text" placeholder="输入你想搜索的东西" id="search_input" v-model="input">
             </label>
 			<div class="search_btn" @click="searchBtn"><img src="../assets/common_search_black.png"></div>
 		</div>
@@ -40,19 +40,21 @@ export default {
     return {
         nowPage:0,
         keyWord:'',
-        popupVisible:false
+        popupVisible:false,
+        input:''
     }
   },
   methods:{
       searchBtn(){
-          let kword=document.getElementById('search_input').value.trim();
+          let kword=this.input.trim();
+          console.log(kword)
           if(kword===''){
             return;
           }
           this.nowPage=1;
           this.addHistory(kword)
           this.keyWord=kword;
-          console.log('我想搜索'+this.keyWord)
+          //console.log('我想搜索'+this.keyWord)
       },
       addHistory(kword){
 		  let historys=localStorage.getItem('historys');
@@ -85,12 +87,23 @@ export default {
                 this.searchBtn();
             }
         };
+      },
+      //分类页面过来的关键词，直接执行搜素
+      doSearchNow(keyword){
+          this.keyWord=keyword;
+          this.input=keyword;
+          this.searchBtn();
       }
   },
   mounted(){
       let inp=document.getElementById('search_input');
       inp.focus();
       this.listenEnter();
+  },
+  activated(){
+      if(this.$route.name==='DoSearch'){
+          this.doSearchNow(this.$route.params.keyword)
+      }
   }
 }
 </script>

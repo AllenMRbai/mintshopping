@@ -24,16 +24,16 @@
 		<!-- 菜单页面 -->
 		<div class="manu_box">
 			<ul class="manu flex_around">
-				<li v-for="(classify,index) in classifies" :key="index">
+				<router-link tag="li" :to="`classify/${classify.dataid}`" v-for="(classify,index) in classifies" :key="index">
 					<div class="manu_pic" :class="'pic_0'+index"></div>
 					<p>{{ classify.name }}</p>
-				</li>
+				</router-link>
 			</ul>
 		</div>
 		
 		<!-- 精选 -->
 		<div class="selected_box">
-			<div class="news_box flex_betwen">
+			<!-- <div class="news_box flex_betwen">
 				<div class="title_pic"><img src="../assets/mall_newsTitle.jpg"></div>
 				<div class="line_vertical"></div>
 				<div class="news_content">
@@ -41,7 +41,7 @@
 					<div class="news_list">新手快速上手，教你如何更省如何如何如何</div>
 				</div>
 			</div>
-			<div class="dot_line"></div>
+			<div class="dot_line"></div> -->
 			<div class="selects flex_betwen">
                 <div class="select" v-for='(select,index) in selects' :key='index' :class="[{'border_right':select.lineRight},{'border_bottom':select.lineBottom}]">
 					<h3>{{ select.title }}</h3>
@@ -55,7 +55,8 @@
 			</div>
 		</div>
 		
-		<div class="special_subject"><img src="../assets/special_subjuct.jpg"></div><!-- banner2 -->
+		<!-- banner2 -->
+		<!-- <div class="special_subject"><img src="../assets/special_subjuct.jpg"></div> -->
 		
 		<!-- 可加载的卡片式产品列表 -->
 		<infinite-scroll-product-card :cards='productCards' :loading='stopLoad' :no-more='noMore' :no-product='noProduct'  @load-more='loadMore'></infinite-scroll-product-card>
@@ -87,11 +88,11 @@ export default {
   data () {
     return {
       classifies:[
-          {name:'女装'},
-          {name:'男装'},
-          {name:'鞋包'},
-          {name:'日用品'},
-          {name:'更多分类'}
+          {name:'女装',dataid:'01'},
+          {name:'男装',dataid:'02'},
+          {name:'鞋包',dataid:'03'},
+          {name:'日用品',dataid:'04'},
+          {name:'更多分类',dataid:'01'}
       ],
       selects:[
           {title:'营养美食',title2:'营养补充，活力一整天',lineRight:true,lineBottom:true},
