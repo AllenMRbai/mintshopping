@@ -70,7 +70,8 @@ export default {
 		  }  
       },
       goTo(text){
-          document.getElementById('search_input').value=text;
+          //document.getElementById('search_input').value=text;
+          this.input=text;
           this.searchBtn();
       },
       changeKey(){

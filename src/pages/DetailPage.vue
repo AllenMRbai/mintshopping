@@ -182,7 +182,7 @@ export default {
 			  let reg=/src="([^"\r\n]*)"/g;
 			  let result;
 			  while((result=reg.exec(str))!=null){
-				RegExp.lastIndex=result.index
+				//RegExp.lastIndex=result.index
 				this.proDetPics.push(result[1]);
 			  }
 			  //console.log(body.data.TaoBao_details)
